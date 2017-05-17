@@ -1,0 +1,309 @@
+<!DOCTYPE HTML>
+<!--
+	Prologue by HTML5 UP
+	html template: https://html5up.net/prologue
+-->
+{% load static %}
+<html>
+	<head>
+		<title>BabaStrat</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/html5shiv.js' %}"></script><![endif]-->
+		<link rel="stylesheet" href="{% static 'babaApp/assets/css/main.css' %}" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie8.css' %}" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie9.css' %}" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<div id="header">
+
+				<div class="top">
+
+					<!-- Logo -->
+						<div id="logo">
+							<!--<span class="image avatar48"><img src="{% static 'babaApp/images/avatar.jpg' %}" alt="" /></span>-->
+							<h1 id="title">BabaStrat</h1>
+							<p>Creating alphas with BABAs</p>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<!--
+
+								Prologue's nav expects links in one of two formats:
+
+								1. Hash link (scrolls to a different section within the page)
+
+								   <li><a href="#foobar" id="foobar-link" class="icon fa-whatever-icon-you-want skel-layers-ignoreHref"><span class="label">Foobar</span></a></li>
+
+								2. Standard link (sends the user to another page/site)
+
+								   <li><a href="http://foobar.tld" id="foobar-link" class="icon fa-whatever-icon-you-want"><span class="label">Foobar</span></a></li>
+
+							-->
+							<ul>
+								<li><a href="#top" id="top-link" class="skel-layers-ignoreHref"><span class="icon fa-lightbulb-o">Learn</span></a></li>
+								<li><a href="#portfolio" id="portfolio-link" class="skel-layers-ignoreHref"><span class="icon fa-cogs">Settings</span></a></li>
+								<li><a href="#about" id="about-link" class="skel-layers-ignoreHref"><span class="icon fa-bar-chart">Reports</span></a></li>
+								<li><a href="#contact" id="contact-link" class="skel-layers-ignoreHref"><span class="icon fa-envelope">_Contact_</span></a></li>
+							</ul>
+						</nav>
+
+				</div>
+
+				<div class="bottom">
+
+					<!-- Social Icons -->
+						<ul class="icons">
+							<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
+							<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+							<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+						</ul>
+
+				</div>
+
+			</div>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- Data chart -->
+					<section id="top" class="one dark cover">
+						<div class="container">
+
+							<header>
+								<h2 class="alt"><strong>Historical</strong> data chart<br/></h2>
+								<p>Visualise market data and track your positions</p>
+							</header>
+
+							<!--<footer>-->
+								<!--<a href="#portfolio" class="button scrolly">Magna Aliquam</a>-->
+							<!--</footer>-->
+
+						</div>
+					</section>
+
+                <!-- Strategy_confidence -->
+                    <section id="strategy_confidence" class="two">
+                        <div class="container">
+                            <table id="strategy_confidence_table" class="layout_table">
+                                <tr>
+                                    <td><h4 class="button">BUY</h4></td>
+                                    <td><h2>0.76</h2></td>
+									<td><div class="verticalDivider"></div></td>
+									<td><h2>0.31</h2></td>
+                                    <td><h4 class="button">SELL</h4></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </section>
+
+				<!-- Positions -->
+					<section id="positions" class="three">
+						<div class="container">
+							<table id="positions_table" class="layout_table">
+								<th>Quantity</th>
+								<th>Direction</th>
+								<th>Price</th>
+								<th>Current Price</th>
+								<th>Result</th>
+
+								<!-- Fake data to be removed -->
+								<tr>
+									<td>60000</td><td>BUY</td><td>1.29392</td><td>1.30492</td><td>214.59</td>
+								</tr>
+								<tr>
+									<td>40000</td><td>SELL</td><td>1.23192</td><td>1.30492</td><td>-814.59</td>
+								</tr>
+
+							</table>
+						</div>
+					</section>
+
+                <!-- BABA elements -->
+                    <section id="baba_elements" class="four">
+                        <div class="container">
+                            <div class="assumptionsSection babaElementsScroll">
+                                <table id="assumptions_table" class="layout_table babaElementsTable">
+                                    <th><b>assumptions</b></th>
+                                    <tr><th>a</th></tr>
+                                    <tr><th>b</th></tr>
+                                </table>
+                            </div>
+                            <div class="contrariesSection babaElementsScroll">
+                                <table id="contraries_table" class="layout_table babaElementsTable">
+                                    <th><b>contraries</b></th>
+                                    <tr><th>a, _a</th></tr>
+                                    <tr><th>b, _b</th></tr>
+                                    <tr><th>c, _c</th></tr>
+                                </table>
+                            </div>
+                            <div class="rvsSection babaElementsScroll">
+                                <table id="rvs_table" class="layout_table babaElementsTable">
+                                    <th><b>random variables<b></th>
+                                    <tr><th>s</th></tr>
+                                    <tr><th>t</th></tr>
+                                    <tr><th>u</th></tr>
+                                    <tr><th>v</th></tr>
+                                </table></div>
+                        </div>
+                    </section>
+
+                <!-- Rules -->
+                    <section id="rules" class="three">
+                        <div class="container">
+                            rules
+                            <div class="rulesScroll">
+                                <table id="rules_table" class="layout_table">
+                                    <tr><td>_a |~ { b, s }</td></tr>
+                                    <tr><td>_b |~ { c, t }</td></tr>
+                                    <tr><td>_c |~ { d, u }</td></tr>
+                                    <tr><td>_a |~ { b, s }</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+				<!-- Portfolio -->
+					<!--<section id="portfolio" class="two">-->
+						<!--<div class="container">-->
+
+							<!--<header>-->
+								<!--<h2>Portfolio</h2>-->
+							<!--</header>-->
+
+							<!--<p>Vitae natoque dictum etiam semper magnis enim feugiat convallis convallis-->
+							<!--egestas rhoncus ridiculus in quis risus amet curabitur tempor orci penatibus.-->
+							<!--Tellus erat mauris ipsum fermentum etiam vivamus eget. Nunc nibh morbi quis-->
+							<!--fusce hendrerit lacus ridiculus.</p>-->
+
+							<!--<div class="row">-->
+								<!--<div class="4u 12u$(mobile)">-->
+									<!--<article class="item">-->
+										<!--<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic02.jpg' %}" alt="" /></a>-->
+										<!--<header>-->
+											<!--<h3>Ipsum Feugiat</h3>-->
+										<!--</header>-->
+									<!--</article>-->
+									<!--<article class="item">-->
+										<!--<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic03.jpg' %}" alt="" /></a>-->
+										<!--<header>-->
+											<!--<h3>Rhoncus Semper</h3>-->
+										<!--</header>-->
+									<!--</article>-->
+								<!--</div>-->
+								<!--<div class="4u 12u$(mobile)">-->
+									<!--<article class="item">-->
+										<!--<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic04.jpg' %}" alt="" /></a>-->
+										<!--<header>-->
+											<!--<h3>Magna Nullam</h3>-->
+										<!--</header>-->
+									<!--</article>-->
+									<!--<article class="item">-->
+										<!--<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic05.jpg' %}" alt="" /></a>-->
+										<!--<header>-->
+											<!--<h3>Natoque Vitae</h3>-->
+										<!--</header>-->
+									<!--</article>-->
+								<!--</div>-->
+								<!--<div class="4u$ 12u$(mobile)">-->
+									<!--<article class="item">-->
+										<!--<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic06.jpg' %}" alt="" /></a>-->
+										<!--<header>-->
+											<!--<h3>Dolor Penatibus</h3>-->
+										<!--</header>-->
+									<!--</article>-->
+									<!--<article class="item">-->
+										<!--<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic07.jpg' %}" alt="" /></a>-->
+										<!--<header>-->
+											<!--<h3>Orci Convallis</h3>-->
+										<!--</header>-->
+									<!--</article>-->
+								<!--</div>-->
+							<!--</div>-->
+
+						<!--</div>-->
+					<!--</section>-->
+
+				<!-- About Me -->
+					<!--<section id="about" class="three">-->
+						<!--<div class="container">-->
+
+							<!--<header>-->
+								<!--<h2>About Me</h2>-->
+							<!--</header>-->
+
+							<!--<a href="#" class="image featured"><img src="{% static 'babaApp/images/pic08.jpg' %}" alt="" /></a>-->
+
+							<!--<p>Tincidunt eu elit diam magnis pretium accumsan etiam id urna. Ridiculus-->
+							<!--ultricies curae quis et rhoncus velit. Lobortis elementum aliquet nec vitae-->
+							<!--laoreet eget cubilia quam non etiam odio tincidunt montes. Elementum sem-->
+							<!--parturient nulla quam placerat viverra mauris non cum elit tempus ullamcorper-->
+							<!--dolor. Libero rutrum ut lacinia donec curae mus vel quisque sociis nec-->
+							<!--ornare iaculis.</p>-->
+
+						<!--</div>-->
+					<!--</section>-->
+
+				<!-- Contact -->
+					<!--<section id="contact" class="four">-->
+						<!--<div class="container">-->
+
+							<!--<header>-->
+								<!--<h2>Contact</h2>-->
+							<!--</header>-->
+
+							<!--<p>Elementum sem parturient nulla quam placerat viverra-->
+							<!--mauris non cum elit tempus ullamcorper dolor. Libero rutrum ut lacinia-->
+							<!--donec curae mus. Eleifend id porttitor ac ultricies lobortis sem nunc-->
+							<!--orci ridiculus faucibus a consectetur. Porttitor curae mauris urna mi dolor.</p>-->
+
+							<!--<form method="post" action="#">-->
+								<!--<div class="row">-->
+									<!--<div class="6u 12u$(mobile)"><input type="text" name="name" placeholder="Name" /></div>-->
+									<!--<div class="6u$ 12u$(mobile)"><input type="text" name="email" placeholder="Email" /></div>-->
+									<!--<div class="12u$">-->
+										<!--<textarea name="message" placeholder="Message"></textarea>-->
+									<!--</div>-->
+									<!--<div class="12u$">-->
+										<!--<input type="submit" value="Send Message" />-->
+									<!--</div>-->
+								<!--</div>-->
+							<!--</form>-->
+
+						<!--</div>-->
+					<!--</section>-->
+
+			</div>
+
+		<!-- Footer -->
+			<div id="footer">
+
+                <ul class="copyright">
+                    <li>Equity <b>GBP 10000</b></li>
+                    <li>GBP/USD position value <b>GBP -897.23</b></li>
+                </ul>
+
+				<!--&lt;!&ndash; Copyright &ndash;&gt;-->
+					<!--<ul class="copyright">-->
+						<!--<li>&copy; Untitled. All rights reserved.</li>-->
+                        <!--<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>-->
+					<!--</ul>-->
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="{% static 'babaApp/assets/js/jquery.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/jquery.scrollzer.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/skel.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/util.js' %}"></script>
+			<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/respond.min.js' %}"></script><![endif]-->
+			<script src="{% static 'babaApp/assets/js/main.js' %}"></script>
+
+	</body>
+</html>
