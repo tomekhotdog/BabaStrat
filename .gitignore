@@ -9,6 +9,7 @@ local_settings.py
 db.sqlite3
 media
 
-.idea/
+.idea/*
+
 
 # End of https://www.gitignore.io/api/django
