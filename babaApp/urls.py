@@ -5,7 +5,7 @@ from . import views
 app_name = 'babaApp'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'frameworks/$', views.frameworks, name='frameworks')
+   url(r'frameworks/$', views.frameworks, name='frameworks')
 ]
 
 # app_name = 'polls'

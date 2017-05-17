@@ -61,7 +61,6 @@
     table.layout_table {
         margin: 0 0 0 0;
         font-size: 0.7em;
-        border: 1px solid grey;
     }
 
     table.babaElementsTable {
@@ -78,6 +77,10 @@
     div.rulesScroll {
         height: 200px;
         overflow: auto;
+    }
+
+    div.divBorder {
+        border: 1px solid grey;
     }
 
     .assumptionsSection {

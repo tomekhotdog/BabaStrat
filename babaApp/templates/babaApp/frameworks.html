@@ -104,7 +104,7 @@
 
 				<!-- Positions -->
 					<section id="positions" class="three">
-						<div class="container">
+						<div class="container divBorder">
 							<table id="positions_table" class="layout_table">
 								<th>Quantity</th>
 								<th>Direction</th>
@@ -127,28 +127,40 @@
                 <!-- BABA elements -->
                     <section id="baba_elements" class="four">
                         <div class="container">
-                            <div class="assumptionsSection babaElementsScroll">
+                            <div class="assumptionsSection babaElementsScroll divBorder">
                                 <table id="assumptions_table" class="layout_table babaElementsTable">
                                     <th><b>assumptions</b></th>
-                                    <tr><th>a</th></tr>
-                                    <tr><th>b</th></tr>
+
+                                    {% if assumptions %}
+                                    {% for assumption in assumptions %}
+                                    <tr><th>{{ assumption }}</th></tr>
+                                    {% endfor %}
+                                    {% endif %}
+
                                 </table>
                             </div>
-                            <div class="contrariesSection babaElementsScroll">
+                            <div class="contrariesSection babaElementsScroll divBorder">
                                 <table id="contraries_table" class="layout_table babaElementsTable">
                                     <th><b>contraries</b></th>
-                                    <tr><th>a, _a</th></tr>
-                                    <tr><th>b, _b</th></tr>
-                                    <tr><th>c, _c</th></tr>
+
+                                    {% if contraries %}
+                                    {% for contrary in contraries %}
+                                    <tr><th>{{ contrary }}</th></tr>
+                                    {% endfor %}
+                                    {% endif %}
+
                                 </table>
                             </div>
-                            <div class="rvsSection babaElementsScroll">
+                            <div class="rvsSection babaElementsScroll divBorder">
                                 <table id="rvs_table" class="layout_table babaElementsTable">
-                                    <th><b>random variables<b></th>
-                                    <tr><th>s</th></tr>
-                                    <tr><th>t</th></tr>
-                                    <tr><th>u</th></tr>
-                                    <tr><th>v</th></tr>
+                                    <th><b>random variables</b></th>
+
+                                    {% if random_variables %}
+                                    {% for rv in random_variables %}
+                                    <tr><th>{{ rv }}</th></tr>
+                                    {% endfor %}
+                                    {% endif %}
+
                                 </table></div>
                         </div>
                     </section>
@@ -157,12 +169,15 @@
                     <section id="rules" class="three">
                         <div class="container">
                             rules
-                            <div class="rulesScroll">
+                            <div class="rulesScroll divBorder">
                                 <table id="rules_table" class="layout_table">
-                                    <tr><td>_a |~ { b, s }</td></tr>
-                                    <tr><td>_b |~ { c, t }</td></tr>
-                                    <tr><td>_c |~ { d, u }</td></tr>
-                                    <tr><td>_a |~ { b, s }</td></tr>
+
+                                    {% if rules %}
+                                    {% for rule in rules %}
+                                    <tr><th>{{ rule }}</th></tr>
+                                    {% endfor %}
+                                    {% endif %}
+
                                 </table>
                             </div>
                         </div>
