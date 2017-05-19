@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE HTML>
+<!--
+	Prologue by HTML5 UP
+	html template: https://html5up.net/prologue
+-->
+{% load static %}
+<html>
+	<head>
+		<title>BabaStrat</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/html5shiv.js' %}"></script><![endif]-->
+		<link rel="stylesheet" href="{% static 'babaApp/assets/css/main.css' %}" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie8.css' %}" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie9.css' %}" /><![endif]-->
+	</head>
+	<body>
+
+        <!-- Header: (sidebar) -->
+            {% include "babaApp/sideBar.html" %}
+        <!-- end of sidebar -->
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- Data chart -->
+					<section id="top" class="one dark cover">
+						<div class="container">
+
+							<header>
+								<p>Executed trades and analysis</p>
+							</header>
+
+						</div>
+					</section>
+
+                <!-- Strategy_confidence -->
+                    <section id="strategy_confidence" class="two">
+                        <div class="container">
+                            Table of trades
+                        </div>
+                    </section>
+
+				<!-- Positions -->
+					<section id="positions" class="three">
+						<div class="container divBorder">
+                            Selected trade detail views?
+                            Explanation?
+						</div>
+					</section>
+
+                <!-- BABA elements -->
+                    <section id="baba_elements" class="four">
+                        <div class="container">
+                            Some other options
+                        </div>
+                    </section>
+                
+			</div>
+
+		<!-- Footer -->
+			<div id="footer">
+
+                <ul class="copyright">
+                    <li>Equity <b>GBP 10000</b></li>
+                    <li>GBP/USD position value <b>GBP -897.23</b></li>
+                </ul>
+
+				<!--&lt;!&ndash; Copyright &ndash;&gt;-->
+					<!--<ul class="copyright">-->
+						<!--<li>&copy; Untitled. All rights reserved.</li>-->
+                        <!--<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>-->
+					<!--</ul>-->
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="{% static 'babaApp/assets/js/jquery.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/jquery.scrollzer.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/skel.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/util.js' %}"></script>
+			<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/respond.min.js' %}"></script><![endif]-->
+			<script src="{% static 'babaApp/assets/js/main.js' %}"></script>
+
+	</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>

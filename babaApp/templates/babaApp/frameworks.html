@@ -15,58 +15,9 @@
 		<!--[if lte IE 9]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie9.css' %}" /><![endif]-->
 	</head>
 	<body>
-
-		<!-- Header -->
-			<div id="header">
-
-				<div class="top">
-
-					<!-- Logo -->
-						<div id="logo">
-							<!--<span class="image avatar48"><img src="{% static 'babaApp/images/avatar.jpg' %}" alt="" /></span>-->
-							<h1 id="title">BabaStrat</h1>
-							<p>Creating alphas with BABAs</p>
-						</div>
-
-					<!-- Nav -->
-						<nav id="nav">
-							<!--
-
-								Prologue's nav expects links in one of two formats:
-
-								1. Hash link (scrolls to a different section within the page)
-
-								   <li><a href="#foobar" id="foobar-link" class="icon fa-whatever-icon-you-want skel-layers-ignoreHref"><span class="label">Foobar</span></a></li>
-
-								2. Standard link (sends the user to another page/site)
-
-								   <li><a href="http://foobar.tld" id="foobar-link" class="icon fa-whatever-icon-you-want"><span class="label">Foobar</span></a></li>
-
-							-->
-							<ul>
-								<li><a href="#top" id="top-link" class="skel-layers-ignoreHref"><span class="icon fa-lightbulb-o">Learn</span></a></li>
-								<li><a href="#portfolio" id="portfolio-link" class="skel-layers-ignoreHref"><span class="icon fa-cogs">Settings</span></a></li>
-								<li><a href="#about" id="about-link" class="skel-layers-ignoreHref"><span class="icon fa-bar-chart">Reports</span></a></li>
-								<li><a href="#contact" id="contact-link" class="skel-layers-ignoreHref"><span class="icon fa-envelope">_Contact_</span></a></li>
-							</ul>
-						</nav>
-
-				</div>
-
-				<div class="bottom">
-
-					<!-- Social Icons -->
-						<ul class="icons">
-							<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
-							<li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
-							<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-
-				</div>
-
-			</div>
+        <!-- Header: (sidebar) -->
+            {% include "babaApp/sideBar.html" %}
+        <!-- end of sidebar -->
 
 		<!-- Main -->
 			<div id="main">
@@ -79,6 +30,10 @@
 								<h2 class="alt"><strong>Historical</strong> data chart<br/></h2>
 								<p>Visualise market data and track your positions</p>
 							</header>
+
+                            {% if framework_name %}
+                            {{ framework_name }}
+                            {% endif %}
 
 							<!--<footer>-->
 								<!--<a href="#portfolio" class="button scrolly">Magna Aliquam</a>-->
@@ -93,9 +48,9 @@
                             <table id="strategy_confidence_table" class="layout_table">
                                 <tr>
                                     <td><h4 class="button">BUY</h4></td>
-                                    <td><h2>0.76</h2></td>
+                                    <td><h2>{{ semantic_probabilities.BUY }}</h2></td>
 									<td><div class="verticalDivider"></div></td>
-									<td><h2>0.31</h2></td>
+									<td><h2>{{ semantic_probabilities.SELL }}</h2></td>
                                     <td><h4 class="button">SELL</h4></td>
                                 </tr>
                             </table>
@@ -127,9 +82,10 @@
                 <!-- BABA elements -->
                     <section id="baba_elements" class="four">
                         <div class="container">
-                            <div class="assumptionsSection babaElementsScroll divBorder">
-                                <table id="assumptions_table" class="layout_table babaElementsTable">
-                                    <th><b>assumptions</b></th>
+                            <div class="assumptionsSection">
+                                <h5>Assumptions</h5>
+                                <div class="babaElementsScroll divBorder">
+                                    <table id="assumptions_table" class="layout_table babaElementsTable">
 
                                     {% if assumptions %}
                                     {% for assumption in assumptions %}
@@ -138,30 +94,51 @@
                                     {% endif %}
 
                                 </table>
+                                </div>
+                                <div class="input_box">
+                                    <form role="form" action="" method="post">
+                                        {% csrf_token %}
+                                        {{ assumption_form.assumption }}
+                                    </form>
+                                </div>
                             </div>
-                            <div class="contrariesSection babaElementsScroll divBorder">
-                                <table id="contraries_table" class="layout_table babaElementsTable">
-                                    <th><b>contraries</b></th>
-
+                            <div class="contrariesSection">
+                                <h5>Contraries</h5>
+                                <div class="babaElementsScroll divBorder">
+                                    <table id="contraries_table" class="layout_table babaElementsTable">
                                     {% if contraries %}
                                     {% for contrary in contraries %}
                                     <tr><th>{{ contrary }}</th></tr>
                                     {% endfor %}
                                     {% endif %}
-
                                 </table>
+                                </div>
+                                <div class="input_box">
+                                    <form role="form" action="" method="post">
+                                        {% csrf_token %}
+                                        {{ contrary_form.contrary }}
+                                    </form>
+                                </div>
                             </div>
-                            <div class="rvsSection babaElementsScroll divBorder">
-                                <table id="rvs_table" class="layout_table babaElementsTable">
-                                    <th><b>random variables</b></th>
-
+                            <div class="rvsSection">
+                                <h5>Random Variables</h5>
+                                <div class="babaElementsScroll divBorder">
+                                    <table id="rvs_table" class="layout_table babaElementsTable">
                                     {% if random_variables %}
                                     {% for rv in random_variables %}
                                     <tr><th>{{ rv }}</th></tr>
-                                    {% endfor %}
-                                    {% endif %}
+                                    {% endfor %}{% endif %}
 
-                                </table></div>
+                                    </table>
+                                </div>
+                                <div class="input_box">
+                                    <form role="form" action="" method="post">
+                                        {% csrf_token %}
+                                        {{ random_variable_form.random_variable }}
+                                    </form>
+                                </div>
+                            </div>
+
                         </div>
                     </section>
 

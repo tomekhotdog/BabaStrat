@@ -79,6 +79,24 @@
         overflow: auto;
     }
 
+    div.frameworksScroll {
+        margin-top: 0.4em;
+        height: 500px;
+        overflow: auto;
+    }
+
+    div.frameworksSidebar {
+        margin: 0.6em 0 1em 0;
+        width: 100%;
+    }
+
+    .frameworksList li {
+        padding: 0.4em 20% 0.4em 0.2em;
+		font-size: 0.7em;
+		background: url("images/currency.png") 5% 0.9em no-repeat;
+		color: #888;
+    }
+
     div.divBorder {
         border: 1px solid grey;
     }
@@ -96,6 +114,10 @@
     .rvsSection {
         float: left;
         width: 33.3%;
+    }
+
+    div.input_box {
+        margin-top: 10px;
     }
 
 /* Dividers */
