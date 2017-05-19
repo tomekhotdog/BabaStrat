@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_list_or_404
+from django.http import JsonResponse
 from babaSemantics import BABAProgramParser as Parser
 from babaSemantics import Semantics as Semantics
 from babaApp.extras import specificStyling
@@ -95,3 +96,9 @@ def process_form_submission(request):
             t = 5
 
     # do something
+
+
+def chart_data(request):
+    data = {'data': {'1': '100', '2': 200, '3': 300}, 'data_name': 'data'}
+
+    return JsonResponse(data)

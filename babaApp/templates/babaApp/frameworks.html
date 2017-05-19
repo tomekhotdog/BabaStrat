@@ -14,7 +14,7 @@
 		<!--[if lte IE 8]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie8.css' %}" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie9.css' %}" /><![endif]-->
 	</head>
-	<body>
+	<body onLoad='setupChartPolling()'>
         <!-- Header: (sidebar) -->
             {% include "babaApp/sideBar.html" %}
         <!-- end of sidebar -->
@@ -27,20 +27,21 @@
 						<div class="container">
 
 							<header>
-								<h2 class="alt"><strong>Historical</strong> data chart<br/></h2>
-								<p>Visualise market data and track your positions</p>
+								<h2 class="alt"><strong>{{ framework_name }}</strong><br/></h2>
+								<p id="subheading">Visualise market data and track your positions</p>
 							</header>
 
-                            {% if framework_name %}
-                            {{ framework_name }}
-                            {% endif %}
-
-							<!--<footer>-->
-								<!--<a href="#portfolio" class="button scrolly">Magna Aliquam</a>-->
-							<!--</footer>-->
+							<footer>
+                                <button type="button" onclick="footerButtonClick()">Click me!</button>
+							</footer>
 
 						</div>
 					</section>
+
+                <!-- Historical data chart -->
+                    <section id="chart_section">
+                        <canvas id="myChart" width="800" height="300"></canvas>
+                    </section>
 
                 <!-- Strategy_confidence -->
                     <section id="strategy_confidence" class="two">
@@ -296,6 +297,8 @@
 			<script src="{% static 'babaApp/assets/js/util.js' %}"></script>
 			<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/respond.min.js' %}"></script><![endif]-->
 			<script src="{% static 'babaApp/assets/js/main.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/historicalDataCharting.js' %}"></script>
 
+            <script src="{% static 'babaApp/assets/js/Chart.min.js' %}"></script>
 	</body>
 </html>

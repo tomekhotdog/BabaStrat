@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^settings/$', views.settings, name='settings'),
     url(r'^reports/$', views.reports, name='reports'),
     url(r'^frameworks/(?P<framework_name>[\w-]+)/$', views.frameworks, name='frameworks'),
-    url(r'^frameworks/$', views.frameworks_default, name='frameworks_default')
+    url(r'^frameworks/$', views.frameworks_default, name='frameworks_default'),
+    url(r'^data/$', views.chart_data, name='chart_data')
 ]
