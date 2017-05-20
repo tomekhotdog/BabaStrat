@@ -1,4 +1,4 @@
-POLLING_TIME = 5000
+POLLING_TIME = 20000
 
 
 function footerButtonClick() {
@@ -22,7 +22,7 @@ function setupChartPolling() {
         });
 
         setTimeout(fetchData, POLLING_TIME)
-        document.getElementById("subheading").innerHTML = "You got me" + (Math.random() * 100).toString();
+        document.getElementById("subheading").innerHTML = "You got me " + (Math.random() * 100).toString();
     }
 
     setTimeout(fetchData, POLLING_TIME)
