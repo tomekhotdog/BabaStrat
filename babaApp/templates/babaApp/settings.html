@@ -23,28 +23,40 @@
 		<!-- Main -->
 			<div id="main">
 
-				<!-- Data chart -->
+				<!-- Header -->
 					<section id="top" class="one dark cover">
 						<div class="container">
 
 							<header>
-								<p>Settings and trading preferences</p>
+								<h3>Settings and trading preferences</h3>
 							</header>
 
 						</div>
 					</section>
 
-                <!-- Strategy_confidence -->
-                    <section id="strategy_confidence" class="two">
-                        <div class="container">
-                            Some settings
-                        </div>
-                    </section>
+                <!-- Form -->
+                <section id="settings_section" class="two">
+                    <div id="form_div" class="container">
+                        <form role="form" action="" method="post">
+                            {% csrf_token %}
+
+                            {{ settings_form }}
+                            <br><br>
+
+                            <input type="submit" value="Update">
+                        </form>
+                    </div>
+                </section>
 
 				<!-- Positions -->
 					<section id="positions" class="three">
 						<div class="container divBorder">
-                            Some default options
+                            <h3>Term definitions</h3>
+                            <p><strong>Enable trading: </strong>when enabled, your trading strategies will be executed under the specified conditions</p>
+                            <p><strong>Trading options: </strong>select which trading strategies should tracked</p>
+                            <p><strong>Required trade confidence: </strong>trades will only be executed when the semantic probability, a measure of confidence according to your defined strategy, reaches the specified level</p>
+                            <p><strong>Close position yield: </strong>open trading positions will be closed once profit is at the chosen level</p>
+                            <p><strong>Close position loss limit</strong>open trading positions that perform unexpectedly will be closed to limit losses, defined as a maximum acceptable percentage loss</p>
 						</div>
 					</section>
 

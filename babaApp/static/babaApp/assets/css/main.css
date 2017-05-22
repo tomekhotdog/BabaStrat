@@ -65,7 +65,10 @@
 
     table.babaElementsTable {
         height: 150px
+    }
 
+    table.settingsOptions {
+        font-size: 15em;
     }
 
     div.babaElementsScroll {

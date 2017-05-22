@@ -4,7 +4,7 @@ from babaSemantics import BABAProgramParser as Parser
 from babaSemantics import Semantics as Semantics
 from babaApp.extras import specificStyling
 from .models import Framework
-from .forms import AssumptionForm, ContraryForm, RandomVariableForm
+from .forms import AssumptionForm, ContraryForm, RandomVariableForm, SettingsForm
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 
 
@@ -65,8 +65,13 @@ def learn(request):
 
 
 def settings(request):
+    if request.method == POST:
+        process_settings_form_submission(request)
+
+    settings_form = SettingsForm()
+
     framework_list = get_list_or_404(Framework)
-    context = {'frameworks': framework_list,
+    context = {'frameworks': framework_list, 'settings_form': settings_form,
                "style": specificStyling.get_sidebar_styling('settings')}
 
     return render(request, 'babaApp/settings.html', context)
@@ -97,6 +102,10 @@ def process_form_submission(request):
             t = 5
 
     # do something
+
+def process_settings_form_submission(request):
+    # TODO: save settings
+    t = 5
 
 
 def chart_data(request, instrument_name):
