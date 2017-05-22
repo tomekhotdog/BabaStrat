@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^reports/$', views.reports, name='reports'),
     url(r'^frameworks/(?P<framework_name>[\w-]+)/$', views.frameworks, name='frameworks'),
     url(r'^frameworks/$', views.frameworks_default, name='frameworks_default'),
-    url(r'^data/$', views.chart_data, name='chart_data')
+    url(r'^marketdata/(?P<instrument_name>[\w-]+)/$', views.chart_data, name='chart_data')
 ]

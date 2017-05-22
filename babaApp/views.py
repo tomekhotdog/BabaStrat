@@ -5,6 +5,7 @@ from babaSemantics import Semantics as Semantics
 from babaApp.extras import specificStyling
 from .models import Framework
 from .forms import AssumptionForm, ContraryForm, RandomVariableForm
+from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 
 
 POST = 'POST'
@@ -98,7 +99,7 @@ def process_form_submission(request):
     # do something
 
 
-def chart_data(request):
-    data = {'data': {'1': '100', '2': 200, '3': 300}, 'data_name': 'data'}
+def chart_data(request, instrument_name):
+    data = get_json(instrument_name, WEEK)
 
     return JsonResponse(data)
