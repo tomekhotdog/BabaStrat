@@ -39,8 +39,13 @@
                     <div id="form_div" class="container">
                         <form role="form" action="" method="post">
                             {% csrf_token %}
+                            {{ framework_selection }}
+                        </form>
 
+                        <form role="form" action="{% url 'babaApp:settings' %}{{ selected_framework }}/" method="post">
+                            {% csrf_token %}
                             {{ settings_form }}
+
                             <br><br>
 
                             <input type="submit" value="Update">

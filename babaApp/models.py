@@ -26,6 +26,12 @@ class DataTick(models.Model):
         return self.dataset.dataset_name + " " + str(self.tick_time) + " " + str(self.price)
 
 
+class User(models.Model):
+    username = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.username
+
 #########################
 #   Trading Settings    #
 #########################
@@ -36,12 +42,16 @@ TRADING_OPTION_BOTH = 2
 
 
 class TradingSettings(models.Model):
+    user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     framework_name = models.ForeignKey(Framework, on_delete=models.CASCADE)
-    enable_trading = models.BooleanField()
+    enable_trading = models.BooleanField(default=True)
     trading_options = models.IntegerField(default=2)
-    required_trade_confidence = models.FloatField()
-    close_position_yield = models.FloatField()
-    close_position_loss_limit = models.FloatField()
+    required_trade_confidence = models.FloatField(default=100)
+    close_position_yield = models.FloatField(default=5)
+    close_position_loss_limit = models.FloatField(default=5)
+
+    def __str__(self):
+        return 'Settings for: ' + self.user.username + ", " + self.framework_name.framework_name
 
 
 ##############################
@@ -49,12 +59,20 @@ class TradingSettings(models.Model):
 ##############################
 
 class Portfolio(models.Model):
-    start_value = models.FloatField()
+    user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+    start_value = models.FloatField(default=10000)
+    current_value = models.FloatField(default=10000)
+
+    def __str__(self):
+        return 'Portfolio for: ' + self.user.username
 
 
 class Trade(models.Model):
+    portfolio = models.ForeignKey(Portfolio, default=1, on_delete=models.CASCADE)
     framework_name = models.ForeignKey(Framework, on_delete=models.CASCADE)
     instrument_symbol = models.CharField(max_length=50)
-    quantity = models.IntegerField()
-    value = models.FloatField()
+    quantity = models.IntegerField(default=0)
+    value = models.FloatField(default=0)
     open_position = models.BooleanField()
+    position_opened = models.TimeField(null=True, blank=True)
+    position_closed = models.TimeField(null=True, blank=True)

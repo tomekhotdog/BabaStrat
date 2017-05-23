@@ -1,14 +1,18 @@
 from django.shortcuts import render, get_list_or_404
 from django.http import JsonResponse
+from django import forms
+from django.forms import Select
+
 from babaSemantics import BABAProgramParser as Parser
 from babaSemantics import Semantics as Semantics
 from babaApp.extras import specificStyling
 from .models import Framework
-from .forms import AssumptionForm, ContraryForm, RandomVariableForm, SettingsForm
+from .forms import AssumptionForm, ContraryForm, RandomVariableForm, SettingsForm, FrameworkSelectionForm, trading_choices, trading_options
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
-
+from babaApp.databaseController import controller as controller
 
 POST = 'POST'
+EMPTY = ''
 
 
 def index(request):
@@ -31,7 +35,8 @@ def frameworks(request, framework_name):
         return frameworks_default(request)
 
     ##################################################################
-    framework_list = get_list_or_404(Framework)
+    # framework_list = get_list_or_404(Framework)
+    framework_list = controller.get_framework_list()
     framework = Framework.objects.get(framework_name=framework_name)
 
     framework_string = framework.string_representation
@@ -64,14 +69,40 @@ def learn(request):
     return render(request, 'babaApp/learn.html', context)
 
 
-def settings(request):
-    if request.method == POST:
-        process_settings_form_submission(request)
+def settings_default(request):
+    return settings(request, EMPTY)
 
+
+def settings(request, selected_framework):
     settings_form = SettingsForm()
+    framework_selection = FrameworkSelectionForm()
 
-    framework_list = get_list_or_404(Framework)
-    context = {'frameworks': framework_list, 'settings_form': settings_form,
+    if request.method == POST:
+        framework_selection_form = FrameworkSelectionForm(request.POST)
+
+        # Framework has been selected by user
+        if framework_selection_form.is_valid():
+            selected_framework = framework_selection_form.cleaned_data['framework_selection']
+            framework_selection = FrameworkSelectionForm(initial={'framework_selection': selected_framework})
+
+        # Settings form submission
+        if not selected_framework == EMPTY:
+            s = controller.get_settings(controller.get_user(), selected_framework)
+            settings_form = SettingsForm(initial={'enable_trading': trading_choices[s.enable_trading],
+                                                  'trading_options': trading_options[s.trading_options],
+                                                  'required_trade_confidence': s.required_trade_confidence,
+                                                  'close_position_yield': s.close_position_yield,
+                                                  'close_position_loss_limit': s.close_position_loss_limit})
+            framework_selection = FrameworkSelectionForm(initial={'framework_selection': selected_framework})
+
+        # Settings form submission
+        if 'framework_selection' not in request.POST:
+            process_settings_form_submission(request, selected_framework)
+
+    framework_list = controller.get_framework_list()
+
+    context = {'frameworks': framework_list, 'framework_selection': framework_selection,
+               'settings_form': settings_form, 'selected_framework': selected_framework,
                "style": specificStyling.get_sidebar_styling('settings')}
 
     return render(request, 'babaApp/settings.html', context)
@@ -79,7 +110,15 @@ def settings(request):
 
 def reports(request):
     framework_list = get_list_or_404(Framework)
-    context = {'frameworks': framework_list,
+
+    total_equity, percentage_change = controller.get_total_equity(controller.get_user())
+    open_positions = controller.get_open_positions(controller.get_user())
+    executed_trades = controller.get_executed_trades(controller.get_user())
+    framework_performance = controller.get_framework_performance(controller.get_user())
+    # TODO: overall performance metrics
+
+    context = {'frameworks': framework_list, 'total_equity': total_equity,
+               'percentage_change': percentage_change,
                "style": specificStyling.get_sidebar_styling('reports')}
 
     return render(request, 'babaApp/reports.html', context)
@@ -103,9 +142,17 @@ def process_form_submission(request):
 
     # do something
 
-def process_settings_form_submission(request):
-    # TODO: save settings
-    t = 5
+
+def process_settings_form_submission(request, framework_name):
+    settings_form = SettingsForm(request.POST)
+    s = controller.get_settings(controller.get_user(), framework_name)
+
+    s.enable_trading = True if settings_form.data['enable_trading'] == 'yes' else False
+    s.trading_options = settings_form.data['trading_options']
+    s.required_trade_confidence = settings_form.data['required_trade_confidence']
+    s.close_position_yield = settings_form.data['close_position_yield']
+    s.close_position_loss_limit = settings_form.data['close_position_loss_limit']
+    s.save()
 
 
 def chart_data(request, instrument_name):
