@@ -1,7 +1,5 @@
 from django.shortcuts import render, get_list_or_404
 from django.http import JsonResponse
-from django import forms
-from django.forms import Select
 
 from babaSemantics import BABAProgramParser as Parser
 from babaSemantics import Semantics as Semantics
@@ -10,9 +8,12 @@ from .models import Framework
 from .forms import AssumptionForm, ContraryForm, RandomVariableForm, SettingsForm, FrameworkSelectionForm, trading_choices, trading_options
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 from babaApp.databaseController import controller as controller
+from marketData import services
 
 POST = 'POST'
 EMPTY = ''
+
+market_data_service = services.QueryingMarketDataService()
 
 
 def index(request):
@@ -27,7 +28,6 @@ def frameworks_default(request):
 
 
 def frameworks(request, framework_name):
-
     if request.method == POST:
         process_form_submission(request)
 
@@ -35,9 +35,10 @@ def frameworks(request, framework_name):
         return frameworks_default(request)
 
     ##################################################################
-    # framework_list = get_list_or_404(Framework)
     framework_list = controller.get_framework_list()
     framework = Framework.objects.get(framework_name=framework_name)
+
+    market_data_service.subscribe(framework.symbol)
 
     framework_string = framework.string_representation
     baba = Parser.BABAProgramParser(string=framework_string).parse()
@@ -118,6 +119,8 @@ def reports(request):
     # TODO: overall performance metrics
 
     context = {'frameworks': framework_list, 'total_equity': total_equity,
+               'open_positions': open_positions, 'executed_trades': executed_trades,
+               'framework_performance': framework_performance,
                'percentage_change': percentage_change,
                "style": specificStyling.get_sidebar_styling('reports')}
 

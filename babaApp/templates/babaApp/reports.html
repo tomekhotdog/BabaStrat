@@ -43,49 +43,106 @@
                         <div class="container divBorder">
 							<table class="layout_table">
 								<td>Total equity</td>
-								<td>£10,000</td>
+								<td>£{{ total_equity }}</td>
 								<td>IMAGE</td>
-								<td>+-%change</td>
+								<td>{{ percentage_change }} %</td>
 							</table>
                         </div>
                     </section>
 
 				<!-- Positions -->
 					<section id="open_positions" class="three">
-						<div class="container divBorder">
+						<div class="container">
                             <h4>Open positions</h4>
-                            <table id="open_positions_table">
-                                <th>Symbol</th>
-                                <th>Trade</th>
-                                <th>Quantity</th>
-                                <th>Value</th>
-                                <th>% change</th>
-                            </table>
+                            <div class="reportsTableScroll divBorder">
+                                <table id="open_positions_table" class="layout_table reportsTable">
+                                    <th>Symbol</th>
+                                    <th>Direction</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Current price</th>
+                                    <th>Result</th>
+                                    <th>% change</th>
+                                    {% if open_positions %}
+                                    {% for p in open_positions %}
+
+                                    <tr>
+                                        <td>{{ p.symbol }}</td>
+                                        <td>{{ p.direction }}</td>
+                                        <td>{{ p.quantity }}</td>
+                                        <td>{{ p.price }}</td>
+                                        <td>{{ p.current_price }}</td>
+                                        <td>{{ p.result }}</td>
+                                        <td>{{ p.percentage_change }}</td>
+                                    </tr>
+
+                                    {% endfor %}
+                                    {% endif %}
+                                </table>
+                            </div>
+
 						</div>
 					</section>
 
-                <!-- BABA elements -->
+                <!-- Executed trades -->
                     <section id="executed_trades" class="four">
                         <div class="container">
                             <h4>Executed trades</h4>
-                            <table id="executed_trades_table">
-                                <th>Symbol</th>
-                                <th>Trade</th>
-                                <th>Quantity</th>
-                                <th>Value</th>
-                                <th>Profit</th>
-                            </table>
+                            <div class="reportsTableScroll divBorder">
+                                <table id="executed_trades_table" class="layout_table reportsTable">
+                                    <th>Symbol</th>
+                                    <th>Direction</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Close price</th>
+                                    <th>Result</th>
+                                    <th>% change</th>
+
+                                    {% if executed_trades %}
+                                    {% for t in executed_trades %}
+
+                                    <tr>
+                                        <td>{{ t.symbol }}</td>
+                                        <td>{{ t.direction }}</td>
+                                        <td>{{ t.quantity }}</td>
+                                        <td>{{ t.price }}</td>
+                                        <td>{{ t.close_price }}</td>
+                                        <td>{{ t.result }}</td>
+                                        <td>{{ t.percentage_change }}</td>
+                                    </tr>
+
+                                    {% endfor %}
+                                    {% endif %}
+                                </table>
+                            </div>
+
                         </div>
                     </section>
 
-                                <!-- BABA elements -->
+                                <!-- Framework performance -->
                     <section id="framework_performance" class="four">
                         <div class="container">
                             <h4>Framework performance</h4>
-                            <table id="framework_performance_table">
-                                <th>Framework</th>
-                                <th>% profit</th>
-                            </table>
+                            <div class="reportsTableScroll divBorder">
+                                <table id="framework_performance_table" class="layout_table reportsTable">
+                                    <th>Framework</th>
+                                    <th>Profit</th>
+                                    <th>% profit</th>
+
+                                    {% if framework_performance %}
+                                    {% for f in framework_performance %}
+
+                                    <tr>
+                                        <td>{{ f.framework }}</td>
+                                        <td>{{ f.profit }}</td>
+                                        <td>{{ f.percentage_profit }}</td>
+                                    </tr>
+
+                                    {% endfor %}
+                                    {% endif %}
+                                </table>
+                            </div>
+
                         </div>
                     </section>
 
@@ -94,6 +151,11 @@
                     <section id="Overall performance" class="four">
                         <div class="container">
                             <h4>Overall performance indicators</h4>
+                            <div class="">
+                                <table>
+
+                                </table>
+                            </div>
                         </div>
                     </section>
 

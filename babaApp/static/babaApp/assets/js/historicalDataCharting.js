@@ -1,6 +1,6 @@
 POLLING_TIME = 20000
 INSTRUMENT_NAME = ''
-MARKET_DATA_URL = "http://127.0.0.1:8018/babaApp/marketdata/"
+MARKET_DATA_URL = "http://127.0.0.1:8020/babaApp/marketdata/"
 INSTRUMENT_NAME = document.getElementById("framework_name").innerHTML
 
 function footerButtonClick() {

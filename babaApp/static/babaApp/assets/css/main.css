@@ -64,7 +64,11 @@
     }
 
     table.babaElementsTable {
-        height: 150px
+        height: 150px;
+    }
+
+    table.reportsTable {
+        height: 50px;
     }
 
     table.settingsOptions {
@@ -74,6 +78,12 @@
     div.babaElementsScroll {
         margin: 0;
         height: 150px;
+        overflow: auto;
+    }
+
+    div.reportsTableScroll {
+        margin: 0;
+        height: 200px;
         overflow: auto;
     }
 
@@ -106,7 +116,7 @@
 
     .assumptionsSection {
         float: left;
-        width: 33.3%
+        width: 33.3%;
     }
 
     .contrariesSection {
