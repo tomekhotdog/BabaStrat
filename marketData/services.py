@@ -2,64 +2,69 @@ import threading
 from marketData import realTime
 from babaApp.models import DataSet, DataTick, Framework
 
-
 TASK_TIME_INTERVAL = 60 * 60  # seconds
 
 
-class QueryingMarketDataService:
+class ModuleElements:
+    pass
 
-    def __init__(self):
-        self.subscriptions = set()
-        self.task = None
-        self.task_running = False
-        self.data_source = realTime.MarketDataSource()
-        self.latest_ticks = {}
+__m = ModuleElements()
+__m.subscriptions = set()
+__m.task = None
+__m.task_is_running = False
+__m.data_source = realTime.MarketDataSource()
+__m.latest_ticks = {}
 
-    # Retrieves latest available tick
-    def get_latest_tick(self, symbol):
-        if symbol in self.latest_ticks:
-            return self.latest_ticks[symbol]
-        else:
+
+# Retrieves latest available tick
+def get_latest_tick(symbol):
+    if symbol in __m.latest_ticks:
+        return __m.latest_ticks[symbol]
+    else:
+        framework = Framework.objects.get(symbol=symbol)
+        latest_tick = DataTick.objects.filter(dataset__dataset_name=framework.framework_name).order_by('-tick_time')[0]
+        __m.latest_ticks[symbol] = latest_tick
+        return latest_tick
+
+
+# Subscribe to symbol - periodically query symbol and persist
+def subscribe(symbol):
+    if symbol not in __m.subscriptions:
+        __m.subscriptions.add(symbol)
+
+    if not __m.task_is_running:
+        start_querying_task()
+
+
+# Unsubscribe to symbol - remove from subscriptions list
+def unsubscribe(symbol):
+    if symbol in __m.subscriptions:
+        __m.subscriptions.remove(symbol)
+
+    if len(__m.subscriptions) == 0:
+        __m.task.cancel()
+        __m.task_running = False
+
+
+def start_querying_task():
+    task = threading.Timer(TASK_TIME_INTERVAL, execute_task)
+    task.start()
+    __m.task_running = True
+
+
+def execute_task():
+    for symbol in __m.subscriptions:
+        tick = __m.data_source.request(symbol)
+
+        try:
             framework = Framework.objects.get(symbol=symbol)
-            latest_tick = DataTick.objects.filter(dataset__dataset_name=framework.framework_name).order_by('-tick_time')[0]
-            self.latest_ticks[symbol] = latest_tick
-            return latest_tick
+            dataset = DataSet.objects.get(dataset_name=framework.framework_name)
+            datatick = DataTick(dataset=dataset, tick_time=tick.time, price=tick.asking_price)
+            datatick.save()
+            __m.latest_ticks[symbol] = datatick
+        except DataSet.DoesNotExist:
+            continue
 
-    # Subscribe to symbol - periodically query symbol and persist
-    def subscribe(self, symbol):
-        if symbol not in self.subscriptions:
-            self.subscriptions.add(symbol)
-
-        if not self.task_running:
-            self.start_querying_task()
-
-    # Unsubscribe to symbol - remove from subscriptions list
-    def unsubscribe(self, symbol):
-        if symbol in self.subscriptions:
-            self.subscriptions.remove(symbol)
-
-        if len(self.subscriptions) == 0:
-            self.task.cancel()
-            self.task_running = False
-
-    def start_querying_task(self):
-        self.task = threading.Timer(TASK_TIME_INTERVAL, self.execute_task)
-        self.task.start()
-        self.task_running = True
-
-    def execute_task(self):
-        for symbol in self.subscriptions:
-            tick = self.data_source.request(symbol)
-
-            try:
-                framework = Framework.objects.get(symbol=symbol)
-                dataset = DataSet.objects.get(dataset_name=framework.framework_name)
-                datatick = DataTick(dataset=dataset, tick_time=tick.time, price=tick.asking_price)
-                datatick.save()
-                self.latest_ticks[symbol] = datatick
-            except DataSet.DoesNotExist:
-                continue
-
-        self.start_querying_task()
+    start_querying_task()
 
 

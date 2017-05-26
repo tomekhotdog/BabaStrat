@@ -8,12 +8,10 @@ from .models import Framework
 from .forms import AssumptionForm, ContraryForm, RandomVariableForm, SettingsForm, FrameworkSelectionForm, trading_choices, trading_options
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 from babaApp.databaseController import controller as controller
-from marketData import services
+import marketData.services as market_data_service
 
 POST = 'POST'
 EMPTY = ''
-
-market_data_service = services.QueryingMarketDataService()
 
 
 def index(request):
