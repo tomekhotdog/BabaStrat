@@ -9,9 +9,14 @@ from .forms import AssumptionForm, ContraryForm, RandomVariableForm, SettingsFor
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 from babaApp.databaseController import controller as controller
 import marketData.services as market_data_service
+import StrategyEngine.services as strategy_engine
 
 POST = 'POST'
 EMPTY = ''
+
+#     Start strategy engine loop    #
+strategy_engine.start_strategy_task()
+#####################################
 
 
 def index(request):
@@ -89,6 +94,8 @@ def settings(request, selected_framework):
             s = controller.get_settings(controller.get_user(), selected_framework)
             settings_form = SettingsForm(initial={'enable_trading': trading_choices[s.enable_trading],
                                                   'trading_options': trading_options[s.trading_options],
+                                                  'buy_quantity': s.buy_quantity,
+                                                  'sell_quantity': s.sell_quantity,
                                                   'required_trade_confidence': s.required_trade_confidence,
                                                   'close_position_yield': s.close_position_yield,
                                                   'close_position_loss_limit': s.close_position_loss_limit})
@@ -150,6 +157,8 @@ def process_settings_form_submission(request, framework_name):
 
     s.enable_trading = True if settings_form.data['enable_trading'] == 'yes' else False
     s.trading_options = settings_form.data['trading_options']
+    s.buy_quantity = settings_form.data['buy_quantity']
+    s.sell_quantity = settings_form.data['sell_quantity']
     s.required_trade_confidence = settings_form.data['required_trade_confidence']
     s.close_position_yield = settings_form.data['close_position_yield']
     s.close_position_loss_limit = settings_form.data['close_position_loss_limit']

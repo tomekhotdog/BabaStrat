@@ -27,6 +27,12 @@ class SettingsForm(forms.Form):
         widget=forms.RadioSelect,
         choices=trading_options,
     )
+    buy_quantity = forms.IntegerField(
+        min_value=0,
+    )
+    sell_quantity = forms.IntegerField(
+        min_value=0,
+    )
     required_trade_confidence = forms.FloatField(
         label='Required trade confidence (%)',
         min_value=0.0,

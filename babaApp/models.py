@@ -47,6 +47,8 @@ class TradingSettings(models.Model):
     framework_name = models.ForeignKey(Framework, on_delete=models.CASCADE)
     enable_trading = models.BooleanField(default=True)
     trading_options = models.IntegerField(default=2)
+    buy_quantity = models.IntegerField(default=0)
+    sell_quantity = models.IntegerField(default=0)
     required_trade_confidence = models.FloatField(default=100)
     close_position_yield = models.FloatField(default=5)
     close_position_loss_limit = models.FloatField(default=5)

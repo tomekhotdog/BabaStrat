@@ -3,6 +3,7 @@ from datetime import datetime
 from decimal import DecimalException
 import csv
 
+
 # Parsing CSV files from: http://fxhistoricaldata.com/
 # file format: symbol, datetime, price 1, price 2, price 3, price 4
 # '2015-10-12 15:00:00'
