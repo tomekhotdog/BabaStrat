@@ -14,6 +14,10 @@ class RandomVariableForm(forms.Form):
     random_variable = forms.CharField(required=True)
 
 
+class RuleForm(forms.Form):
+    rule = forms.CharField(required=True)
+
+
 trading_choices = [('yes', 'YES'), ('no', 'NO')]
 trading_options = [(0, 'BUY'), (1, 'SELL'), (2, 'BUY and SELL')]
 

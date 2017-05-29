@@ -5,7 +5,7 @@ from babaSemantics import BABAProgramParser as Parser
 from babaSemantics import Semantics as Semantics
 from babaApp.extras import specificStyling
 from .models import Framework
-from .forms import AssumptionForm, ContraryForm, RandomVariableForm, SettingsForm, FrameworkSelectionForm, trading_choices, trading_options
+from .forms import AssumptionForm, ContraryForm, RandomVariableForm, RuleForm, SettingsForm, FrameworkSelectionForm, trading_choices, trading_options
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 from babaApp.databaseController import controller as controller
 import marketData.services as market_data_service
@@ -13,6 +13,8 @@ import StrategyEngine.services as strategy_engine
 
 POST = 'POST'
 EMPTY = ''
+FLOAT_FORMAT = "{0:.2f}"
+
 
 #     Start strategy engine loop    #
 strategy_engine.start_strategy_task()
@@ -32,35 +34,44 @@ def frameworks_default(request):
 
 def frameworks(request, framework_name):
     if request.method == POST:
-        process_form_submission(request)
+        process_form_submission(request, framework_name)
 
     if not Framework.objects.filter(framework_name=framework_name).exists():
         return frameworks_default(request)
 
     ##################################################################
     framework_list = controller.get_framework_list()
-    framework = Framework.objects.get(framework_name=framework_name)
 
+    language, assumptions, contraries, rvs, rules = controller.get_framework_elements(framework_name)
+
+    framework = Framework.objects.get(framework_name=framework_name)
     market_data_service.subscribe(framework.symbol)
 
-    framework_string = framework.string_representation
-    baba = Parser.BABAProgramParser(string=framework_string).parse()
-    language, assumptions, contraries, rvs, rules = Semantics.string_representation(baba)
+    buy_probability = strategy_engine.get_probability(framework_name, 'BUY', Semantics.SCEPTICALLY_PREFERRED)
+    sell_probability = strategy_engine.get_probability(framework_name, 'SELL', Semantics.SCEPTICALLY_PREFERRED)
 
-    semantic_probabilities = Semantics.compute_semantic_probability(Semantics.GROUNDED, baba)
+    # latest_price = market_data_service.get_latest_tick(framework.symbol)
+
+    open_positions = controller.get_open_positions(controller.get_user(), framework=framework)
+    total_equity, total_equity_percentage_change = controller.get_total_equity(controller.get_user())
     ##################################################################
 
     assumption_form = AssumptionForm
     contrary_form = ContraryForm
     random_variable_form = RandomVariableForm
+    rule_form = RuleForm
 
-    context = {'frameworks': framework_list, 'framework_name': framework_name,
+    context = {'frameworks': framework_list, 'framework_name': framework_name, 'open_positions': open_positions,
                'language': language, 'assumptions': assumptions, 'contraries': contraries,
-               'random_variables': rvs, 'rules': rules, 'semantic_probabilities': semantic_probabilities,
+               'random_variables': rvs, 'rules': rules,
                'assumption_form': assumption_form,
                'contrary_form': contrary_form,
-
-               'random_variable_form': random_variable_form}
+               'rule_form': rule_form,
+               'random_variable_form': random_variable_form,
+               'buy_probability': FLOAT_FORMAT.format(buy_probability),
+               'sell_probability': FLOAT_FORMAT.format(sell_probability),
+               'total_equity': total_equity,
+               'total_equity_percentage_change': total_equity_percentage_change}
 
     return render(request, 'babaApp/frameworks.html', context)
 
@@ -90,6 +101,10 @@ def settings(request, selected_framework):
             framework_selection = FrameworkSelectionForm(initial={'framework_selection': selected_framework})
 
         # Settings form submission
+        if 'framework_selection' not in request.POST:
+            process_settings_form_submission(request, selected_framework)
+
+        # Settings form submission
         if not selected_framework == EMPTY:
             s = controller.get_settings(controller.get_user(), selected_framework)
             settings_form = SettingsForm(initial={'enable_trading': trading_choices[s.enable_trading],
@@ -100,10 +115,6 @@ def settings(request, selected_framework):
                                                   'close_position_yield': s.close_position_yield,
                                                   'close_position_loss_limit': s.close_position_loss_limit})
             framework_selection = FrameworkSelectionForm(initial={'framework_selection': selected_framework})
-
-        # Settings form submission
-        if 'framework_selection' not in request.POST:
-            process_settings_form_submission(request, selected_framework)
 
     framework_list = controller.get_framework_list()
 
@@ -132,23 +143,31 @@ def reports(request):
     return render(request, 'babaApp/reports.html', context)
 
 
-def process_form_submission(request):
+# Add new element to framework string representation (from form submission)
+def process_form_submission(request, framework_name):
     if 'assumption' in request.POST:
         form = AssumptionForm(request.POST)
         if form.is_valid():
             new_assumption = form.cleaned_data['assumption']
+            controller.extend_framework(framework_name, assumption=new_assumption)
 
     elif 'contrary' in request.POST:
         form = ContraryForm(request.POST)
         if form.is_valid():
-            t = 4
+            new_contrary = form.cleaned_data['contrary']
+            controller.extend_framework(framework_name, contrary=new_contrary)
 
     elif 'random_variable' in request.POST:
         form = RandomVariableForm(request.POST)
         if form.is_valid():
-            t = 5
+            new_rv = form.cleaned_data['random_variable']
+            controller.extend_framework(framework_name, rv=new_rv)
 
-    # do something
+    elif 'rule' in request.POST:
+        form = RuleForm(request.POST)
+        if form.is_valid():
+            new_rule = form.cleaned_data['rule']
+            controller.extend_framework(framework_name, rule=new_rule)
 
 
 def process_settings_form_submission(request, framework_name):

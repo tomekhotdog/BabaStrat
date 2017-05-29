@@ -121,7 +121,7 @@ class Contrary:
         return self.assumption == other.assumption and self.contrary == other.contrary
 
     def __str__(self):
-        return "~" + str(self.assumption) + " = " + str(self.contrary)
+        return str(self.assumption) + ", " + str(self.contrary)
 
 
 # A set of sentences, 'support', derives the contrary of the 'attacked' sentence
@@ -524,8 +524,8 @@ def extensions_and_derivations_to_str_list(extension_derivation_tuples):
 def string_representation(baba):
     language = [str(elem) for elem in baba.language]
     assumptions = [str(elem) for elem in baba.assumptions]
-    contraries = [str(elem) for elem in baba.contraries]
+    contrary_elems = [str(baba.contraries[elem]) for elem in baba.contraries]
     rvs = [str(elem) for elem in baba.random_variables]
     rules = [str(elem) for elem in baba.rules]
 
-    return language, assumptions, contraries, rvs, rules
+    return language, assumptions, contrary_elems, rvs, rules

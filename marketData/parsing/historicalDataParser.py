@@ -30,18 +30,24 @@ def parse_csv(file_location):
 
             datatick_time = datetime(year, month, day, hour, minutes, seconds)
 
-            price = float(row[3])
+            ask_price = float(row[3])
+            bid_price = float(row[4])
 
             dataset_objects = DataSet.objects.filter(dataset_name=currency_symbol)
             dataset_object = None
+
             if len(dataset_objects) == 0:
                 dataset_object = DataSet(dataset_name=currency_symbol)
                 dataset_object.save()
             else:
                 dataset_object = dataset_objects[0]
 
-            datatick_object = DataTick(dataset=dataset_object, tick_time=datatick_time, price=price)
             try:
+                datatick_object = DataTick(dataset=dataset_object,
+                                           tick_time=datatick_time,
+                                           ask_price=ask_price,
+                                           bid_price=bid_price)
+
                 datatick_object.save()
             except DecimalException:
                 "Error when saving object (DecimalException)"
@@ -54,6 +60,7 @@ def parse_all_csv_files():
              'GBPJPY', 'GBPUSD', 'NZDUSD', 'USDCAD', 'USDCHF', 'USDJPY', 'XAGUSD', 'XAUUSD']
 
     for currency in currencies:
-        filename = "../historicalData/" + currency + "_hour.csv"
+        filename = "../historicalData/fxhistoricaldata_" + currency + "_hour.csv"
+        print('Parsing: ' + filename)
         parse_csv(filename)
 

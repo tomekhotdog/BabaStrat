@@ -15,14 +15,16 @@ class MarketDataSource:
         response = self.oanda.get_prices(instruments=symbol)
         prices = response.get("prices")
         time = prices[0].get("time")
-        asking_price = prices[0].get("ask")
+        ask_price = prices[0].get("ask")
+        bid_price = prices[0].get("bid")
 
-        return RealTimeTick(time, asking_price)
+        return RealTimeTick(time, ask_price, bid_price)
 
 
 class RealTimeTick:
 
     # time and asking_prices arguments are strings
-    def __init__(self, time, asking_price):
+    def __init__(self, time, ask_price, bid_price):
         self.time = datetime.datetime.strptime(time, "%Y-%m-%dT%H:%M:%S.%fZ")
-        self.asking_price = float(asking_price)
+        self.ask_price = float(ask_price)
+        self.bid_price = float(bid_price)

@@ -50,36 +50,44 @@
                             <table id="strategy_confidence_table" class="layout_table">
                                 <tr>
                                     <td><h4 class="button">BUY</h4></td>
-                                    <td><h2>{{ semantic_probabilities.BUY }}</h2></td>
+                                    <td><h2>{{ buy_probability }}</h2></td>
 									<td><div class="verticalDivider"></div></td>
-									<td><h2>{{ semantic_probabilities.SELL }}</h2></td>
+									<td><h2>{{ sell_probability }}</h2></td>
                                     <td><h4 class="button">SELL</h4></td>
                                 </tr>
                             </table>
                         </div>
                     </section>
 
-				<!-- Positions -->
+				<!--Open Positions -->
+                {% if open_positions %}
 					<section id="positions" class="three">
 						<div class="container divBorder">
 							<table id="positions_table" class="layout_table">
-								<th>Quantity</th>
+								<th>Symbol</th>
 								<th>Direction</th>
+								<th>Quantity</th>
 								<th>Price</th>
-								<th>Current Price</th>
+                                <th>Current Price</th>
 								<th>Result</th>
+                                <th>% change</th>
 
-								<!-- Fake data to be removed -->
-								<tr>
-									<td>60000</td><td>BUY</td><td>1.29392</td><td>1.30492</td><td>214.59</td>
-								</tr>
-								<tr>
-									<td>40000</td><td>SELL</td><td>1.23192</td><td>1.30492</td><td>-814.59</td>
-								</tr>
+                                {% for p in open_positions %}
+                                <tr>
+                                    <td>{{p.symbol}}</td>
+                                    <td>{{p.direction}}</td>
+                                    <td>{{p.quantity}}</td>
+                                    <td>{{p.price}}</td>
+                                    <td>{{p.current_price}}</td>
+                                    <td>{{p.result}}</td>
+                                    <td>{{p.percentage_change}}</td>
+                                </tr>
+                                {% endfor %}
 
 							</table>
 						</div>
 					</section>
+                {% endif %}
 
                 <!-- BABA elements -->
                     <section id="baba_elements" class="four">
@@ -158,6 +166,12 @@
                                     {% endif %}
 
                                 </table>
+                            </div>
+                            <div class="input_box">
+                                <form role="form" action="" method="post">
+                                    {% csrf_token %}
+                                    {{ rule_form.rule }}
+                                </form>
                             </div>
                         </div>
                     </section>
@@ -278,7 +292,9 @@
 			<div id="footer">
 
                 <ul class="copyright">
-                    <li>Equity <b>GBP 10000</b></li>
+                    {% if total_equity %}
+                    <li>Equity <b>GBP {{total_equity}} ({{total_equity_percentage_change}}%)</b></li>
+                    {% endif %}
                     <li>GBP/USD position value <b>GBP -897.23</b></li>
                 </ul>
 

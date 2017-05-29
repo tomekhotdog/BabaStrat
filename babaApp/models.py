@@ -21,10 +21,12 @@ class DataSet(models.Model):
 class DataTick(models.Model):
     dataset = models.ForeignKey(DataSet, on_delete=models.CASCADE)
     tick_time = models.DateTimeField('tick_time')
-    price = models.FloatField()
+    ask_price = models.FloatField()
+    bid_price = models.FloatField()
 
     def __str__(self):
-        return self.dataset.dataset_name + " " + str(self.tick_time) + " " + str(self.price)
+        return self.dataset.dataset_name + " " + str(self.tick_time) + \
+               "Bid: " + str(self.bid_price) + ". Ask: " + str(self.ask_price)
 
 
 class User(models.Model):

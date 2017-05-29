@@ -1,5 +1,8 @@
 from babaApp.models import User, Framework, TradingSettings, Portfolio, Trade
 from django.shortcuts import get_list_or_404
+from marketData import services as market_data_services
+from babaSemantics import BABAProgramParser as Parser
+from babaSemantics import Semantics as Semantics
 
 
 DELTA = 0.000001
@@ -33,7 +36,7 @@ def get_settings(user, framework_name):
 
 
 # Returns user current total equity and overall percentage change
-def get_total_equity(user):
+def get_total_equity(user):  # TODO: plus value of open_positions
     portfolio = Portfolio.objects.get(user=user)
     start = portfolio.start_value
     current = portfolio.current_value
@@ -43,11 +46,12 @@ def get_total_equity(user):
 
 
 # Returns a list of dictionaries of all current open positions
-def get_open_positions(user):
+def get_open_positions(user, framework=None):
     open_trades = Trade.objects.filter(open_position=True, portfolio__user=user)
+    open_trades = open_trades.filter(framework_name=framework) if framework is not None else open_trades
     open_positions = []
     for trade in open_trades:
-        current_price = trade.price
+        current_price = market_data_services.get_latest_price(trade.instrument_symbol, trade.direction)
         open_position = {'symbol': trade.instrument_symbol,
                          'direction': get_direction_string(trade.direction),
                          'quantity': trade.quantity,
@@ -111,3 +115,38 @@ def get_position_result(start, end, quantity):
 
 def get_percentage_change(start, end):
     return (end - start) / start * 100
+
+
+def get_framework_elements(framework_name):
+    framework = Framework.objects.get(framework_name=framework_name)
+    framework_string = framework.string_representation
+
+    baba = Parser.BABAProgramParser(string=framework_string).parse()
+    language, assumptions, contraries, rvs, rules = Semantics.string_representation(baba)
+
+    return [language, assumptions, contraries, rvs, rules]
+
+
+# Append to framework string representation with the relevant element
+def extend_framework(framework_name, assumption=None, contrary=None, rv=None, rule=None):
+    try:
+        framework = Framework.objects.get(framework_name=framework_name)
+        framework_extension = '\n'
+        if assumption is not None:
+            framework_extension += 'myAsm(' + assumption + ').'
+        if contrary is not None:
+            framework_extension += 'contrary(' + contrary + ').'
+        if rv is not None:
+            framework_extension += 'myRV(' + rv + ').'
+        if rule is not None:
+            head = rule.split(':-')[0]
+            body = rule.split(':-')[1]
+            framework_extension = 'myRule(' + head + ', [' + body + ']).'
+
+        framework.string_representation = (framework.string_representation + framework_extension)
+        framework.save()
+
+    except Framework.DoesNotExist:
+        print('Framework with name ' + framework_name + ' does not exist')
+    except RuntimeError:
+        print('Runtime error due to string manipulation of additional element')

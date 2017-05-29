@@ -51,7 +51,8 @@ def queryset_to_json(queryset, label):
         # print(res) # access elements: res.tick_time, res.price
 
         labels.append(' ') # Empty label - do some custom logic here
-        chart_data.append(str(res.price))
+        price_point = (res.bid_price + res.ask_price) / 2
+        chart_data.append(str(price_point))
 
     datasets = [{
         'label': label,
