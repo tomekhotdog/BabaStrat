@@ -1,10 +1,10 @@
 POLLING_TIME = 20000
 INSTRUMENT_NAME = ''
-MARKET_DATA_URL = "http://127.0.0.1:8021/babaApp/marketdata/"
+MARKET_DATA_URL = "http://127.0.0.1:8020/babaApp/marketdata/"
 INSTRUMENT_NAME = document.getElementById("framework_name").innerHTML
 
 function footerButtonClick() {
-    document.getElementById("subheading").innerHTML = "Ohh you've clicked mee....";
+    document.getElementById("test_element").innerHTML = "Ohh you've clicked mee....";
 }
 
 // Polling server for data to populate chart
@@ -35,7 +35,7 @@ function setupChartPolling() {
 var lineChart = null
 
 function drawChart(data) {
-    document.getElementById("subheading").innerHTML = "You got me " + (Math.random() * 100).toString();
+    document.getElementById("test_element").innerHTML = "test element: " + (Math.random() * 100).toString();
 
 
     if (lineChart != null) {

@@ -3,7 +3,7 @@ from marketData import realTime
 from babaApp.models import DataSet, DataTick, Framework
 from babaApp.extras import converters
 
-TASK_TIME_INTERVAL = 60 * 2  # seconds
+TASK_TIME_INTERVAL = 60 * 60  # seconds
 
 
 class ModuleElements:

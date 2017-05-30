@@ -56,9 +56,9 @@ def frameworks(request, framework_name):
     total_equity, total_equity_percentage_change = controller.get_total_equity(controller.get_user())
     ##################################################################
 
-    assumption_form = AssumptionForm
-    contrary_form = ContraryForm
-    random_variable_form = RandomVariableForm
+    assumption_form = AssumptionForm(initial={'assumption': 'assumption'})
+    contrary_form = ContraryForm(initial={'contrary': 'assumption, contrary'})
+    random_variable_form = RandomVariableForm(initial={'random_variable': 'random variable, probability'})
     rule_form = RuleForm
 
     context = {'frameworks': framework_list, 'framework_name': framework_name, 'open_positions': open_positions,

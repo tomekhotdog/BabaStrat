@@ -32,10 +32,6 @@
 								<p id="subheading">Visualise market data and track your positions</p>
 							</header>
 
-							<footer>
-                                <button type="button" onclick="footerButtonClick()">Click me!</button>
-							</footer>
-
 						</div>
 					</section>
 
@@ -170,7 +166,7 @@
                             <div class="input_box">
                                 <form role="form" action="" method="post">
                                     {% csrf_token %}
-                                    {{ rule_form.rule }}
+                                    {{ rule_form }}
                                 </form>
                             </div>
                         </div>
@@ -296,6 +292,7 @@
                     <li>Equity <b>GBP {{total_equity}} ({{total_equity_percentage_change}}%)</b></li>
                     {% endif %}
                     <li>GBP/USD position value <b>GBP -897.23</b></li>
+                    <p id="test_element">Test element</p>
                 </ul>
 
 				<!--&lt;!&ndash; Copyright &ndash;&gt;-->

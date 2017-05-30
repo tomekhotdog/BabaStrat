@@ -15,7 +15,9 @@ class RandomVariableForm(forms.Form):
 
 
 class RuleForm(forms.Form):
-    rule = forms.CharField(required=True)
+    rule = forms.CharField(required=True,
+                           label='',
+                           help_text='Add a rule. (BUY :- assumption, random variable, other element)')
 
 
 trading_choices = [('yes', 'YES'), ('no', 'NO')]
