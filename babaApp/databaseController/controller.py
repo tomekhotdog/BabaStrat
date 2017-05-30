@@ -141,7 +141,7 @@ def extend_framework(framework_name, assumption=None, contrary=None, rv=None, ru
         if rule is not None:
             head = rule.split(':-')[0]
             body = rule.split(':-')[1]
-            framework_extension = 'myRule(' + head + ', [' + body + ']).'
+            framework_extension += 'myRule(' + head + ', [' + body + ']).'
 
         framework.string_representation = (framework.string_representation + framework_extension)
         framework.save()
