@@ -6,7 +6,7 @@ import math
 
 ROUNDING = 10000
 test_time_1 = datetime.date(2017, 10, 30)
-test_time_2 = datetime.date(2017, 12, 30)
+test_time_2 = tick_time=datetime.datetime(2015, 6, 21, 0, 0, 0)
 
 _7_day_simple = 1.20
 _20_day_simple = 1.30
@@ -19,7 +19,7 @@ _100_day_exponential = 1.5672
 
 day_high = 1.9
 day_low = 1.0
-close = 1.4
+day_close = 1.4
 
 
 class IndicatorCalculationTests(TestCase):
@@ -44,12 +44,12 @@ class IndicatorCalculationTests(TestCase):
 
         DataSet.objects.create(dataset_name='test_set_2')
         dataset_2 = DataSet.objects.get(dataset_name='test_set_2')
-        DataTick.objects.create(dataset=dataset_2, tick_time=(test_time_2 - datetime.timedelta(minutes=10)), ask_price=1.20, bid_price=1.20)
-        DataTick.objects.create(dataset=dataset_2, tick_time=(test_time_2 - datetime.timedelta(minutes=20)), ask_price=1.10, bid_price=1.10)
-        DataTick.objects.create(dataset=dataset_2, tick_time=(test_time_2 - datetime.timedelta(minutes=30)), ask_price=1.0, bid_price=1.0)
-        DataTick.objects.create(dataset=dataset_2, tick_time=(test_time_2 - datetime.timedelta(minutes=40)), ask_price=1.70, bid_price=1.70)
-        DataTick.objects.create(dataset=dataset_2, tick_time=(test_time_2 - datetime.timedelta(minutes=50)), ask_price=1.90, bid_price=1.90)
-        DataTick.objects.create(dataset=dataset_2, tick_time=(test_time_2 - datetime.timedelta(minutes=(60 * 23))), ask_price=1.40, bid_price=1.40)
+        DataTick.objects.create(dataset=dataset_2, tick_time=datetime.datetime(2015, 6, 20, 12, 0, 0), ask_price=1.20, bid_price=1.20)
+        DataTick.objects.create(dataset=dataset_2, tick_time=datetime.datetime(2015, 6, 20, 11, 0, 0), ask_price=1.10, bid_price=1.10)
+        DataTick.objects.create(dataset=dataset_2, tick_time=datetime.datetime(2015, 6, 20, 10, 0, 0), ask_price=1.0, bid_price=1.0)
+        DataTick.objects.create(dataset=dataset_2, tick_time=datetime.datetime(2015, 6, 20, 9, 0, 0), ask_price=1.70, bid_price=1.70)
+        DataTick.objects.create(dataset=dataset_2, tick_time=datetime.datetime(2015, 6, 20, 8, 0, 0), ask_price=1.90, bid_price=1.90)
+        DataTick.objects.create(dataset=dataset_2, tick_time=datetime.datetime(2015, 6, 20, 7, 0, 0), ask_price=1.40, bid_price=1.40)
 
     def test_calculates_7_day_simple_average(self):
         data_set = DataSet.objects.get(dataset_name='test_set')
@@ -115,4 +115,4 @@ class IndicatorCalculationTests(TestCase):
         data_set = DataSet.objects.get(dataset_name='test_set_2')
         indicator = indicators.Close()
         result = indicator.calculate(data_set, test_time_2)
-        self.assertAlmostEqual(close, result)
+        self.assertAlmostEqual(day_close, result)

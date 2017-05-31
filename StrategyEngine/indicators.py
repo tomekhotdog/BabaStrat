@@ -103,10 +103,10 @@ class Close(Indicator):
     def __init__(self):
         super().__init__('DayClose')
 
-    def calculate(self, dataset, current_date=datetime.now()):
+    def calculate(self, data_set, current_date=datetime.now()):
         start_date = get_start_date(1, current_date=current_date)
-        ticks = DataTick.objects.filter(dataset=dataset,
-                                        tick_time__gte=start_date).order_by('-tick_time')
+        ticks = DataTick.objects.filter(dataset=data_set,
+                                        tick_time__gte=start_date).order_by('tick_time')
         if len(ticks) == 0:
             return 0
 
