@@ -1,6 +1,6 @@
 import threading
 from marketData import realTime
-from babaApp.models import DataSet, DataTick, Framework
+from babaApp.models import DataSet, DataTick, Market
 from babaApp.extras import converters
 
 TASK_TIME_INTERVAL = 60 * 60  # seconds
@@ -22,8 +22,8 @@ def get_latest_tick(symbol):
     if symbol in __m.latest_ticks:
         return __m.latest_ticks[symbol]
     else:
-        framework = Framework.objects.get(symbol=symbol)
-        latest_tick = DataTick.objects.filter(dataset__dataset_name=framework.framework_name).order_by('-tick_time')[0]
+        market = Market.objects.get(symbol=symbol)
+        latest_tick = DataTick.objects.filter(dataset__dataset_name=market.market_name).order_by('-tick_time')[0]
         __m.latest_ticks[symbol] = latest_tick
         return latest_tick
 
@@ -68,8 +68,8 @@ def execute_task():
         tick = __m.data_source.request(symbol)
 
         try:
-            framework = Framework.objects.get(symbol=symbol)
-            dataset = DataSet.objects.get(dataset_name=framework.framework_name)
+            market = Market.objects.get(symbol=symbol)
+            dataset = DataSet.objects.get(dataset_name=market.framework_name)
             datatick = DataTick(dataset=dataset,
                                 tick_time=tick.time,
                                 ask_price=tick.ask_price,

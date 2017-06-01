@@ -118,20 +118,22 @@
                                 <!-- Framework performance -->
                     <section id="framework_performance" class="four">
                         <div class="container">
-                            <h4>Framework performance</h4>
+                            <h4>Strategy performance</h4>
                             <div class="reportsTableScroll divBorder">
                                 <table id="framework_performance_table" class="layout_table reportsTable">
-                                    <th>Framework</th>
+                                    <th>Market</th>
+                                    <th>Strategy</th>
                                     <th>Profit</th>
                                     <th>% profit</th>
 
-                                    {% if framework_performance %}
-                                    {% for f in framework_performance %}
+                                    {% if strategy_performance %}
+                                    {% for s in strategy_performance %}
 
                                     <tr>
-                                        <td>{{ f.framework }}</td>
-                                        <td>{{ f.profit }}</td>
-                                        <td>{{ f.percentage_profit }}</td>
+                                        <td>{{ s.market_name }}</td>
+                                        <td>{{ s.strategy_name }}</td>
+                                        <td>{{ s.profit }}</td>
+                                        <td>{{ s.percentage_profit }}</td>
                                     </tr>
 
                                     {% endfor %}

@@ -2,11 +2,11 @@ import threading, datetime
 from babaSemantics.Semantics import GROUNDED, SCEPTICALLY_PREFERRED, IDEAL
 from babaSemantics.Semantics import compute_semantic_probability
 import babaSemantics.BABAProgramParser as Parser
-from babaApp.models import Framework, TradingSettings, Trade, Portfolio
+from babaApp.models import Market, TradingSettings, Trade, Portfolio, Strategy
 from babaApp.databaseController import controller
 from marketData import services as market_data_service
 from babaApp.extras import converters
-from StrategyEngine import tradeExecutions
+from StrategyEngine import tradeExecutions, portfolioManagement
 
 RECALCULATION_INTERVAL = 30
 
@@ -51,13 +51,13 @@ def execute_strategy_task():
     __m.task_is_running = True
 
 
-# Iterates through frameworks and recalculates the semantic probabilities
+# Iterates through strategies and recalculates the semantic probabilities
 def update_semantic_probabilities():
-    frameworks = Framework.objects.all()
-    for framework in frameworks:
-        framework_name = framework.framework_name
-        framework_string = framework.string_representation
-        baba = Parser.BABAProgramParser(string=framework_string).parse()
+    strategies = Strategy.objects.all()
+    for strategy in strategies:
+        username = strategy.user.username
+        strategy_name = strategy.strategy_name
+        baba = Parser.BABAProgramParser(string=strategy.framework).parse()
 
         g_probabilities = compute_semantic_probability(GROUNDED, baba)
         s_probabilities = compute_semantic_probability(SCEPTICALLY_PREFERRED, baba)
@@ -68,30 +68,30 @@ def update_semantic_probabilities():
                                     (__m.ideal_probabilities, i_probabilities)]
 
         for (store, probabilities) in store_probability_tuples:
-            store[framework_name + '_' + BUY] = \
+            store[username + '_' + strategy_name + '_' + BUY] = \
                 probabilities[BUY] if BUY in probabilities.keys() else 0
-            store[framework_name + '_' + SELL] = \
+            store[username + '_' + strategy_name + '_' + SELL] = \
                 probabilities[SELL] if SELL in probabilities.keys() else 0
 
 
 # Analyses semantic probabilities, cross referencing with
 #  user thresholds and executes trades as required.
 def perform_open_position_trades(user):
-    frameworks = Framework.objects.all()
-    for framework in frameworks:
+    strategies = Strategy.objects.filter(user=user)
+    for strategy in strategies:
         try:
-            user_trading_settings = TradingSettings.objects.get(user=user, framework_name=framework)
+            user_trading_settings = TradingSettings.objects.get(user=user, strategy=strategy)
             if not user_trading_settings.enable_trading:
                 continue
 
             for direction in [BUY, SELL]:
-                if user_already_holds_position(user, framework, direction):
+                if user_already_holds_position(user, strategy, direction):
                     continue
 
-                key = framework.framework_name + '_' + direction
+                key = strategy.user.username + '_' + strategy.strategy_name + '_' + direction
                 if key in __m.grounded_probabilities.keys() and \
                         __m.grounded_probabilities[key] >= (user_trading_settings.required_trade_confidence / 100):
-                    execute_open_position(user, framework, direction, user_trading_settings)
+                    execute_open_position(user, strategy, direction, user_trading_settings)
 
         except TradingSettings.DoesNotExist:
             continue
@@ -102,7 +102,7 @@ def perform_open_position_trades(user):
 def perform_close_position_trades(user):
     open_positions = Trade.objects.filter(portfolio__user=user, open_position=True)
     for open_position in open_positions:
-        trading_settings = TradingSettings.objects.get(user=user, framework_name=open_position.framework_name)
+        trading_settings = TradingSettings.objects.get(user=user, strategy=open_position.strategy)
         position_direction = converters.trade_type_integer_to_string(open_position.direction)
 
         initial_value = open_position.price * open_position.quantity
@@ -113,18 +113,21 @@ def perform_close_position_trades(user):
         current_value = current_value_per_unit * open_position.quantity
 
         # yield threshold reached
-        if ((current_value - initial_value) / initial_value * 100 * open_position.direction) >= trading_settings.close_position_yield:
-            execute_close_position(open_position)
+        try:
+            if ((current_value - initial_value) / initial_value * 100 * open_position.direction) >= trading_settings.close_position_yield:
+                execute_close_position(open_position)
 
-        # loss limit reached
-        elif ((initial_value - current_value) / initial_value * 100 * open_position.direction) >= trading_settings.close_position_loss_limit:
-            execute_close_position(open_position)
+            # loss limit reached
+            elif ((initial_value - current_value) / initial_value * 100 * open_position.direction) >= trading_settings.close_position_loss_limit:
+                execute_close_position(open_position)
+        except ZeroDivisionError:
+            continue
 
 
-def user_already_holds_position(user, framework, direction):
+def user_already_holds_position(user, strategy, direction):
     direction_integer = converters.trade_type_string_to_integer(direction)
     existing_positions = Trade.objects.filter(portfolio__user=user,
-                                              framework_name=framework,
+                                              strategy=strategy,
                                               open_position=True,
                                               direction=direction_integer)
 
@@ -133,19 +136,19 @@ def user_already_holds_position(user, framework, direction):
 
 # Opens a new position, updates data stores.
 # user, framework, trading_settings = database object, direction = String
-def execute_open_position(user, framework, direction, trading_settings):
-    latest_price = market_data_service.get_latest_tick(framework.symbol)
+def execute_open_position(user, strategy, direction, trading_settings):
+    latest_price = market_data_service.get_latest_tick(strategy.market.symbol)
     quantity = trading_settings.buy_quantity if direction == BUY else trading_settings.sell_quantity
-    tradeExecutions.execute_trade(framework.symbol, quantity, direction, latest_price)
-
     price_per_unit = latest_price.ask_price if direction == BUY else latest_price.bid_price
+
+    if not portfolioManagement.can_execute_trade(user, strategy, quantity, direction, price_per_unit): return
 
     try:
         portfolio = Portfolio.objects.get(user=user)
         trade = Trade(
             portfolio=portfolio,
-            framework_name=framework,
-            instrument_symbol=framework.symbol,
+            strategy=strategy,
+            instrument_symbol=strategy.market.symbol,
             quantity=quantity,
             direction=converters.trade_type_string_to_integer(direction),
             price=price_per_unit,
@@ -153,6 +156,8 @@ def execute_open_position(user, framework, direction, trading_settings):
             position_opened=datetime.datetime.now()
         )
         trade.save()
+
+        tradeExecutions.execute_trade(strategy.market.symbol, quantity, direction, price_per_unit)
 
         # TODO: portfolio update - delegate to another class (in databaseController)
         # trade_unit_price = latest_price.ask_price if direction == 'BUY' else latest_price.bid_price
@@ -184,8 +189,8 @@ def execute_close_position(open_position):
 
 
 # Returns the probability for the corresponding framework, direction (string) and semantics
-def get_probability(framework_name, direction, semantics):
-    key = framework_name + '_' + direction
+def get_probability(user, strategy_name, direction, semantics):
+    key = user.username + '_' + strategy_name + '_' + direction
 
     if semantics == GROUNDED and key in __m.grounded_probabilities.keys():
         return __m.grounded_probabilities[key]

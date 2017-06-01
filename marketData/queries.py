@@ -2,11 +2,12 @@ from datetime import datetime, timedelta
 from babaApp.models import DataTick
 
 
-DAY = 1
-WEEK = 2
-MONTH = 3
-YEAR = 4
-THREE_YEARS = 5
+DAY = '1'
+WEEK = '2'
+MONTH = '3'
+_3MONTHS = '4'
+YEAR = '5'
+THREE_YEARS = '6'
 
 
 # Returns the JSON representation for a query of
@@ -29,6 +30,8 @@ def get_start_date(duration, current_date=datetime.now()):
         time_delta = timedelta(7)
     elif duration == MONTH:
         time_delta = timedelta(30)
+    elif duration == _3MONTHS:
+        time_delta = timedelta(90)
     elif duration == YEAR:
         time_delta = timedelta(365)
     elif duration == THREE_YEARS:

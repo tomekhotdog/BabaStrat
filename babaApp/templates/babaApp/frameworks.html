@@ -27,8 +27,9 @@
 						<div class="container">
 
 							<header>
-								<h2 class="alt"><strong>{{ framework_name }}</strong><br/></h2>
-                                <p id="framework_name" hidden>{{ framework_name }}</p>
+								<h2 class="alt"><strong>{{ market_name }}</strong><br/></h2>
+                                <p id="framework_name" hidden>{{ market_name }}</p>
+                                <p>({{ strategy_name }} strategy)</p>
 								<p id="subheading">Visualise market data and track your positions</p>
 							</header>
 
@@ -37,7 +38,33 @@
 
                 <!-- Historical data chart -->
                     <section id="chart_section">
-                        <canvas id="myChart" width="800" height="300"></canvas>
+                        <!--<form role="form" action="" method="post" style="padding:0;margin:0">-->
+                            <!--{% csrf_token %}-->
+                            <!--{{ strategy_selection_form.strategy_selection }}-->
+                        <!--</form>-->
+                        <div id="chart_div">
+                            <canvas id="myChart" width="800" height="300"></canvas>
+                        </div>
+                        <div id="chart_options_div">
+                            <button id="day" style="width:90px" onclick="chartView(this.id)">DAY  </button>
+                            <button id="week" style="width:90px" onclick="chartView(this.id)">WEEK </button>
+                            <button id="month" style="width:90px" onclick="chartView(this.id)">MONTH</button>
+                            <button id="3mth" style="width:90px" onclick="chartView(this.id)">3 MTH</button>
+                            </br>
+                        </div>
+                        <div id="strategy_options">
+                            <!--<form role="form" action="{% url 'babaApp:settings' %}{{ selected_framework }}/" method="post">-->
+                            <form role="form" action="{% url 'babaApp:frameworks_with_market' market_name=market_name %}" method="post" style="width:20%;height:100%;float:left;">
+                                {% csrf_token %}
+                                {{ strategy_selection_form.strategy_selection }}
+                            </form>
+                            <button style="width:20%;float:left;margin:15px 0 0 5%" onclick="overlay()">New Strategy</button>
+                            <button style="width:20%;float:left;margin:15px 0 0 5%" onclick="">Analyse Strategy</button>
+                            <button style="width:20%;float:left;margin:15px 0 0 5%" onclick="">Trading Preferences</button>
+
+                        </div>
+
+
                     </section>
 
                 <!-- Strategy_confidence -->
@@ -303,6 +330,7 @@
 
 			</div>
 
+
 		<!-- Scripts -->
 			<script src="{% static 'babaApp/assets/js/jquery.min.js' %}"></script>
 			<script src="{% static 'babaApp/assets/js/jquery.scrolly.min.js' %}"></script>
@@ -312,7 +340,18 @@
 			<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/respond.min.js' %}"></script><![endif]-->
 			<script src="{% static 'babaApp/assets/js/main.js' %}"></script>
 			<script src="{% static 'babaApp/assets/js/historicalDataCharting.js' %}"></script>
+        <script src="{% static 'babaApp/assets/js/overlay.js' %}"></script>
 
             <script src="{% static 'babaApp/assets/js/Chart.min.js' %}"></script>
 	</body>
+
+    <div id="overlay" style='visibility:hidden'>
+        <p>Enter new strategy name:</p>
+        <form action='' method='POST'>
+            {% csrf_token %}
+            {{ new_strategy_form.new_strategy }}
+        </form>
+        <button onclick="removeOverlay()" style='width:60%;height:40px;margin:40px 0px 0px 0px'>Cancel</button>
+    </div>
+
 </html>

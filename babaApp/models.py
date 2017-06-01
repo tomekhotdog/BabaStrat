@@ -1,14 +1,30 @@
 from django.db import models
 
 
-class Framework(models.Model):
-    framework_name = models.CharField(max_length=200)
-    symbol = models.CharField(default=" ", max_length=30)
-    creation_date = models.DateTimeField('Date created')
+class User(models.Model):
+    username = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.username
+
+
+class Market(models.Model):
+    market_name = models.CharField(max_length=200)
+    symbol = models.CharField(default='', max_length=30)
     string_representation = models.TextField(default='.', blank=True)
 
     def __str__(self):
-        return self.framework_name
+        return self.market_name
+
+
+class Strategy(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    market = models.ForeignKey(Market, on_delete=models.CASCADE)
+    strategy_name = models.CharField(default='', max_length=30)
+    framework = models.TextField(default='.')
+
+    def __str__(self):
+        return '(' + self.market.market_name + ') ' + self.strategy_name
 
 
 class DataSet(models.Model):
@@ -29,12 +45,6 @@ class DataTick(models.Model):
                "Bid: " + str(self.bid_price) + ". Ask: " + str(self.ask_price)
 
 
-class User(models.Model):
-    username = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.username
-
 #########################
 #   Trading Settings    #
 #########################
@@ -46,7 +56,7 @@ TRADING_OPTION_BOTH = 2
 
 class TradingSettings(models.Model):
     user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
-    framework_name = models.ForeignKey(Framework, on_delete=models.CASCADE)
+    strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
     enable_trading = models.BooleanField(default=True)
     trading_options = models.IntegerField(default=2)
     buy_quantity = models.IntegerField(default=0)
@@ -56,7 +66,7 @@ class TradingSettings(models.Model):
     close_position_loss_limit = models.FloatField(default=5)
 
     def __str__(self):
-        return 'Settings for: ' + self.user.username + ", " + self.framework_name.framework_name
+        return 'Settings for: ' + self.user.username + ", " + self.strategy.strategy_name
 
 
 ##############################
@@ -74,7 +84,7 @@ class Portfolio(models.Model):
 
 class Trade(models.Model):
     portfolio = models.ForeignKey(Portfolio, default=1, on_delete=models.CASCADE)
-    framework_name = models.ForeignKey(Framework, on_delete=models.CASCADE)
+    strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
     instrument_symbol = models.CharField(max_length=50)
     quantity = models.IntegerField(default=0)
     direction = models.IntegerField(default=0)

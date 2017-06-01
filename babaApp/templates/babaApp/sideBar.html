@@ -46,9 +46,9 @@
                                 <div class="frameworksScroll">
                                     <ul class="frameworksList">
 
-                                        {% if frameworks %}
-                                        {% for framework in frameworks %}
-                                        <li><a href="{% url 'babaApp:frameworks' framework.framework_name %}">{{ framework.framework_name }}</a></li>
+                                        {% if markets %}
+                                        {% for market in markets %}
+                                        <li><a href="{% url 'babaApp:frameworks_with_market' market.market_name %}">{{ market.market_name }}</a></li>
                                         {% endfor %}
                                         {% endif %}
 

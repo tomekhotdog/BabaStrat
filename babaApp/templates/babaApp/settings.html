@@ -29,6 +29,9 @@
 
 							<header>
 								<h3>Settings and trading preferences</h3>
+                                {% if selected_strategy %}
+                                <p>{{selected_strategy}}</p>
+                                {% endif %}
 							</header>
 
 						</div>
@@ -39,10 +42,10 @@
                     <div id="form_div" class="container">
                         <form role="form" action="" method="post">
                             {% csrf_token %}
-                            {{ framework_selection }}
+                            {{ strategy_selection_form }}
                         </form>
 
-                        <form role="form" action="{% url 'babaApp:settings' %}{{ selected_framework }}/" method="post">
+                        <form role="form" action="{% url 'babaApp:settings' %}{{selected_strategy}}/" method="post">
                             {% csrf_token %}
                             {{ settings_form }}
 
@@ -53,7 +56,7 @@
                     </div>
                 </section>
 
-				<!-- Positions -->
+				<!-- Term definitions -->
 					<section id="positions" class="three">
 						<div class="container divBorder">
                             <h3>Term definitions</h3>
@@ -65,7 +68,7 @@
 						</div>
 					</section>
 
-                <!-- BABA elements -->
+                <!--  -->
                     <section id="baba_elements" class="four">
                         <div class="container">
                             Some data options?

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Framework
+from .models import Market, Strategy
 
 
 class AssumptionForm(forms.Form):
@@ -56,8 +56,20 @@ class SettingsForm(forms.Form):
     )
 
 
-class FrameworkSelectionForm(forms.Form):
-    framework_selection = forms.ModelChoiceField(
-        queryset=Framework.objects,
+class StrategyPreferencesSelectionForm(forms.Form):
+    strategy_selection = forms.ModelChoiceField(
+        queryset=Strategy.objects,
         empty_label=' ',
         widget=forms.Select(attrs={'onchange': 'this.form.submit();'}))
+
+
+class StrategySelectionForm(forms.Form):
+    strategy_selection = forms.ModelChoiceField(
+        queryset=Strategy.objects,
+        empty_label='select strategy',
+        widget=forms.Select(attrs={'onchange': 'this.form.submit();'})
+    )
+
+
+class NewStrategyForm(forms.Form):
+    new_strategy = forms.CharField(required=True)
