@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<!--
+	Prologue by HTML5 UP
+	html template: https://html5up.net/prologue
+-->
+{% load static %}
+<html>
+	<head>
+		<title>BabaStrat</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/html5shiv.js' %}"></script><![endif]-->
+		<link rel="stylesheet" href="{% static 'babaApp/assets/css/main.css' %}" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie8.css' %}" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie9.css' %}" /><![endif]-->
+	</head>
+	<body onLoad='setupAnalyseCharts()'>
+
+        <!-- Header: (sidebar) -->
+            {% include "babaApp/sideBar.html" %}
+        <!-- end of sidebar -->
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- Data chart -->
+                <section id="top" class="one dark cover">
+                    <div class="container">
+                        <header>
+                            <h2 class="alt">Analyse strategy</h2>
+                            <p>View performance, back test and compare strategies</p>
+                            <p>{{strategy_name}} ({{market_name}})</p>
+                            <p id="username" hidden>{{ username }}</p>
+                            <p id="strategy_name" hidden>{{ strategy_name }}</p>
+                            <p id="strategy_performance_data_url" hidden>{{ strategy_performance_data_url }}</p>
+                            <p id="back_test_data_url" hidden>{{ back_test_data_url }}</p>
+                    </div>
+                </section>
+
+                <!-- Strategy performance section -->
+                <section id="strategy_performance" style="margin-top:0px">
+                    <p>Strategy performance</p>
+                    <div id="analyse_chart_div">
+                        <canvas id="performanceChart" width="700" height="350"></canvas>
+                    </div>
+                    <div id="analyse_chart_options_div">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {{ time_interval_form }}
+                            <input type="submit" value="Recalculate" style="width:100%;height:40px;padding:0px;margin-top:20px">
+                        </form>
+                    </div>
+                </section>
+
+                 <!-- Back test strategy section -->
+                <section id="back_test_strategy" style="margin-top:0px">
+                    <p>Back test strategy</p>
+                    <div id="analyse_test_chart_div">
+                        <canvas id="backTestChart" width="700" height="350"></canvas>
+                    </div>
+                    <div id="analyse_test_chart_options_div">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {{ back_test_time_interval_form }}
+                            <input type="submit" value="Simulate" style="width:100%;height:40px;padding:0px;margin-top:20px">
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Strategy_confidence -->
+                    <section id="strategy_confidence" class="two">
+                        <div class="container">
+                            Introduction
+                        </div>
+                    </section>
+
+				<!-- Positions -->
+					<section id="positions" class="three">
+						<div class="container divBorder">
+                            Example usage
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<div id="footer">
+
+                <ul class="copyright">
+                    <li>Equity <b>GBP 10000</b></li>
+                    <li>GBP/USD position value <b>GBP -897.23</b></li>
+                </ul>
+
+				<!--&lt;!&ndash; Copyright &ndash;&gt;-->
+					<!--<ul class="copyright">-->
+						<!--<li>&copy; Untitled. All rights reserved.</li>-->
+                        <!--<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>-->
+					<!--</ul>-->
+
+			</div>
+
+		<!-- Scripts -->
+        <script src="{% static 'babaApp/assets/js/jquery.min.js' %}"></script>
+        <script src="{% static 'babaApp/assets/js/jquery.scrolly.min.js' %}"></script>
+        <script src="{% static 'babaApp/assets/js/jquery.scrollzer.min.js' %}"></script>
+        <script src="{% static 'babaApp/assets/js/skel.min.js' %}"></script>
+        <script src="{% static 'babaApp/assets/js/util.js' %}"></script>
+        <!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/respond.min.js' %}"></script><![endif]-->
+        <script src="{% static 'babaApp/assets/js/main.js' %}"></script>
+        <script src="{% static 'babaApp/assets/js/Chart.min.js' %}"></script>
+        <script src="{% static 'babaApp/assets/js/historicalDataCharting.js' %}"></script>
+
+        <!--<link rel="stylesheet" type="text/css" href="{% static 'admin/css/forms.css' %} "/>-->
+        <!--<link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %} "/>-->
+        <!--<link rel="stylesheet" type="text/css" href="{% static 'admin/css/global.css' %}"/>-->
+        <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}"/>
+
+
+        <!--take from: https://stackoverflow.com/questions/38601/using-django-time-date-widgets-in-custom-form-->
+        <script src="/admin/jsi18n/"></script>
+        <script src="{% static 'admin/js/core.js' %}"></script>
+        <script src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
+        <script src="{% static 'admin/js/jquery.js' %}"></script>
+        <!--<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>-->
+        <script src="{% static 'admin/js/actions.js' %}"></script>
+        <script src="{% static 'admin/js/calendar.js' %}"></script>
+        <script src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
+
+	</body>
+</html>

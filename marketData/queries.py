@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-from babaApp.models import DataTick
-
+from babaApp.models import DataTick, DataSet, Market
+from babaApp.extras import applicationStrings
 
 DAY = '1'
 WEEK = '2'
@@ -75,3 +75,23 @@ def queryset_to_json(queryset, label):
     data = {'labels': labels, 'datasets': datasets}
 
     return data
+
+
+# Returns the first recorded price for a given direction integer, symbol and date
+def get_symbol_price(symbol, date, direction):
+    market = Market.objects.get(symbol=symbol)
+    data_set = DataSet.objects.get(dataset_name=market.market_name)
+    data_ticks = DataTick.objects.filter(dataset=data_set, tick_time__gte=date).order_by('tick_time')
+
+    if len(data_ticks) > 0:
+        if direction == applicationStrings.BUY_DIRECTION:
+            return data_ticks[0].ask_price
+        if direction == applicationStrings.SELL_DIRECTION:
+            return data_ticks[0].bid_price
+
+    raise MarketDataUnavailable('Market data unavailable for: ' + symbol + ', date: ' + str(date))
+
+
+class MarketDataUnavailable(Exception):
+    def __init__(self, message):
+            self.message = message

@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.admin import widgets
 from .models import Market, Strategy
 
 
@@ -73,3 +74,23 @@ class StrategySelectionForm(forms.Form):
 
 class NewStrategyForm(forms.Form):
     new_strategy = forms.CharField(required=True)
+
+
+class TimeIntervalSelectionForm(forms.Form):
+    start_date = forms.DateField()
+    end_date = forms.DateField()
+
+    def __init__(self, *args, **kwargs):
+        super(TimeIntervalSelectionForm, self).__init__(*args, **kwargs)
+        # self.fields['start_date'].widget = widgets.AdminDateWidget()
+        self.fields['end_date'].widget = widgets.AdminDateWidget()
+
+
+class BackTestTimeIntervalSelectionForm(forms.Form):
+    test_start_date = forms.DateTimeField(label='Start date')
+    test_end_date = forms.DateTimeField(label='End date')
+
+    def __init__(self, *args, **kwargs):
+        super(BackTestTimeIntervalSelectionForm, self).__init__(*args, **kwargs)
+        self.fields['test_start_date'].widget = widgets.AdminDateWidget()
+        self.fields['test_end_date'].widget = widgets.AdminDateWidget()

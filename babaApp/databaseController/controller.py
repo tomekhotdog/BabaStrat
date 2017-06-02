@@ -65,6 +65,22 @@ def get_strategies_for_user(user):
     return Strategy.objects.filter(user=user).order_by('market')
 
 
+def get_market_for_strategy_name(user, strategy_name):
+    return Strategy.objects.get(user=user, strategy_name=strategy_name).market
+
+
+def get_strategy_index(user, strategy_name):
+    # strategies = get_strategies_for_user(user)
+    strategies = Strategy.objects.filter(user=user)
+    counter = 1
+    for s in strategies:
+        if s.strategy_name == strategy_name:
+            return counter
+        counter += 1
+
+    return 0
+
+
 def get_strategies_for_user_and_market(user, market):
     return Strategy.objects.filter(user=user, market=market).order_by('strategy_name')
 
@@ -163,9 +179,9 @@ def get_strategy_elements(user, strategy_name):
 
 
 # Append to framework string representation with the relevant element
-def extend_framework(strategy_name, assumption=None, contrary=None, rv=None, rule=None):
+def extend_framework(user, strategy_name, assumption=None, contrary=None, rv=None, rule=None):
     try:
-        strategy = Strategy.objects.get(strategy_name=strategy_name)
+        strategy = Strategy.objects.get(user=user, strategy_name=strategy_name)
         strategy_extension = '\n'
         if assumption is not None:
             strategy_extension += 'myAsm(' + assumption + ').'
@@ -178,7 +194,7 @@ def extend_framework(strategy_name, assumption=None, contrary=None, rv=None, rul
             body = rule.split(':-')[1]
             strategy_extension += 'myRule(' + head + ', [' + body + ']).'
 
-        strategy.string_representation = (strategy.string_representation + strategy_extension)
+        strategy.framework = (strategy.framework + strategy_extension)
         strategy.save()
 
     except Strategy.DoesNotExist:

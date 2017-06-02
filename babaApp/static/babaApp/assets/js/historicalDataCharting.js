@@ -1,8 +1,12 @@
 POLLING_TIME = 20000
 INSTRUMENT_NAME = ''
 DURATION = '/2'
-MARKET_DATA_URL = "http://127.0.0.1:8042/babaApp/marketdata/"
+MARKET_DATA_URL = "/babaApp/marketdata/"
 INSTRUMENT_NAME = document.getElementById("framework_name").innerHTML
+
+first_graph_drawing = true
+INITIAL_ANIMATION_DURATION = 1000
+UPDATE_ANIMATION_DURATION = 0
 
 function footerButtonClick() {
     document.getElementById("test_element").innerHTML = "Ohh you've clicked mee....";
@@ -13,7 +17,7 @@ function setupChartPolling() {
 
     function fetchData() {
         function onDataReceived(data) {
-              drawChart(data)
+            drawChart(data)
         }
 
         URL = MARKET_DATA_URL.concat(INSTRUMENT_NAME).concat(DURATION)
@@ -27,7 +31,7 @@ function setupChartPolling() {
             }
         });
 
-//        setTimeout(fetchData, POLLING_TIME)
+        setTimeout(fetchData, POLLING_TIME)
     }
 
     fetchData()
@@ -39,43 +43,118 @@ function drawChart(data) {
     document.getElementById("test_element").innerHTML = "test element: " + (Math.random() * 100).toString();
 
     if (lineChart != null) {
-//        lineChart.destroy()
+        lineChart.destroy()
     }
 
+    animation_duration = first_graph_drawing ? INITIAL_ANIMATION_DURATION : UPDATE_ANIMATION_DURATION
+
     var ctx = document.getElementById("myChart").getContext("2d");
-    lineChart = new Chart(ctx)
-    lineChart.Line(data, {
-        responsive: true,
-        maintainAspectRatio: true,
-//        animation: false
+    myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            animation: {
+                duration: animation_duration
+            }
+        }
     });
+
+    first_graph_drawing = false
+
 }
 
 function chartView(id) {
+    first_graph_drawing = true
+
     if (id == 'day') {
         DURATION = '/1'
     } else if (id == 'week') {
         DURATION = '/2'
     } else if (id == 'month') {
         DURATION = '/3'
-    } else if (id == '3mnth') {
+    } else if (id == '3mth') {
         DURATION = '/4'
     }
 
-    resetCanvas()
     setupChartPolling()
 }
 
-function resetCanvas() {
-  $('#myChart').remove(); // this is my <canvas> element
-  $('#chart_div').append('<canvas id="myChart"><canvas>');
-  canvas = document.querySelector('#myChart');
-  ctx = canvas.getContext('2d');
-  ctx.canvas.width = 800 //$('#chart_section').width(); // resize to parent width
-  ctx.canvas.height = 300 // $('#chart_section').height(); // resize to parent height
-  var x = canvas.width/2;
-  var y = canvas.height/2;
-//  ctx.font = '10pt Verdana';
-//  ctx.textAlign = 'center';
-//  ctx.fillText('This text is centered on the canvas', x, y);
-};
+// URLs to be encoded in hidden html elements, set through POST submissions
+//strategy_performance_data_url = document.getElementById("strategy_performance_data_url").innerHTML
+//back_test_data_url = document.getElementById("back_test_data_url").innerHTML
+
+function setupAnalyseCharts() {
+    username = document.getElementById("username").innerHTML
+    strategy_name = document.getElementById("strategy_name").innerHTML
+
+    getPerformanceChartData(username, strategy_name)
+    getBackTestChartData(username, strategy_name)
+}
+
+function getPerformanceChartData(username, strategy_name) {
+    URL = document.getElementById("strategy_performance_data_url").innerHTML
+    $.ajax({
+        url: URL,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            drawPerformanceChart(data)
+        }
+    });
+}
+
+function getBackTestChartData(username, strategy_name) {
+    URL = document.getElementById("back_test_data_url").innerHTML
+    $.ajax({
+        url: URL,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            drawBackTestChart(data)
+        }
+    });
+}
+
+function drawPerformanceChart(data) {
+    var ctx = document.getElementById("performanceChart").getContext("2d");
+    performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+        }
+    });
+}
+
+function drawBackTestChart(data) {
+    var ctx = document.getElementById("backTestChart").getContext("2d");
+    performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+        }
+    });
+}

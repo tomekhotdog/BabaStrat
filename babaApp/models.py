@@ -11,7 +11,6 @@ class User(models.Model):
 class Market(models.Model):
     market_name = models.CharField(max_length=200)
     symbol = models.CharField(default='', max_length=30)
-    string_representation = models.TextField(default='.', blank=True)
 
     def __str__(self):
         return self.market_name
@@ -91,9 +90,21 @@ class Trade(models.Model):
     price = models.FloatField(default=0)
     close_price = models.FloatField(null=True, blank=True)
     open_position = models.BooleanField()
-    position_opened = models.TimeField(null=True, blank=True)
-    position_closed = models.TimeField(null=True, blank=True)
+    position_opened = models.DateTimeField(null=True, blank=True)
+    position_closed = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.instrument_symbol + ": " + str(self.quantity) + " @ " + str(self.price)
 
+
+class SimulatedTrade(models.Model):
+    user = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
+    strategy = models.ForeignKey(Strategy, on_delete=models.CASCADE)
+    instrument_symbol = models.CharField(max_length=50)
+    quantity = models.IntegerField(default=0)
+    direction = models.IntegerField(default=0)
+    price = models.FloatField(default=0)
+    close_price = models.FloatField(null=True, blank=True)
+    open_position = models.BooleanField()
+    position_opened = models.DateTimeField(null=True, blank=True)
+    position_closed = models.DateTimeField(null=True, blank=True)

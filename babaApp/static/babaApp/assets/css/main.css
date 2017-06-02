@@ -130,6 +130,7 @@
     }
 
     #chart_section {
+        padding: 10px 10px 10px 10px;
     }
 
     #chart_div {
@@ -140,6 +141,30 @@
     #chart_options_div {
         float: left;
         width: 5%;
+        margin-top:2%;
+    }
+
+    #analyse_chart_div {
+        float: left;
+        width: 75%;
+        margin-right:2%
+    }
+
+    #analyse_chart_options_div {
+        float: left;
+        width: 20%;
+        margin-top:2%;
+    }
+
+    #analyse_test_chart_div {
+        float: left;
+        width: 75%;
+        margin-right:2%
+    }
+
+    #analyse_test_chart_options_div {
+        float: left;
+        width: 20%;
         margin-top:2%;
     }
 

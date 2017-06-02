@@ -45,7 +45,7 @@
                             {{ strategy_selection_form }}
                         </form>
 
-                        <form role="form" action="{% url 'babaApp:settings' %}{{selected_strategy}}/" method="post">
+                        <form role="form" action="{% url 'babaApp:settings' %}update/{{selected_strategy}}/" method="post">
                             {% csrf_token %}
                             {{ settings_form }}
 
