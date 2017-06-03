@@ -67,6 +67,10 @@
         height: 150px;
     }
 
+    table.macroElementsTable {
+        height: 150px;
+    }
+
     table.reportsTable {
         height: 50px;
     }
@@ -128,6 +132,32 @@
         float: left;
         width: 33.3%;
     }
+
+    .macroRulesSection {
+        float: left;
+        width: 80%;
+    }
+
+    .macroElementsSection {
+        float: left;
+        width: 20%;
+    }
+
+    div.macroElementsScroll {
+        margin: 0;
+        height: 150px;
+        overflow: auto;
+    }
+
+    /*
+    div.macroRules {
+        width: 70%;
+    }
+
+    div.macroElements {
+        width: 25%
+    }
+    */
 
     #chart_section {
         padding: 10px 10px 10px 10px;

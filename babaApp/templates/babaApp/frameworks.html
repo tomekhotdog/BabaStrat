@@ -128,7 +128,7 @@
 
                                     {% if assumptions %}
                                     {% for assumption in assumptions %}
-                                    <tr><th>{{ assumption }}</th></tr>
+                                    <tr><td>{{ assumption }}</td></tr>
                                     {% endfor %}
                                     {% endif %}
 
@@ -147,7 +147,7 @@
                                     <table id="contraries_table" class="layout_table babaElementsTable">
                                     {% if contraries %}
                                     {% for contrary in contraries %}
-                                    <tr><th>{{ contrary }}</th></tr>
+                                    <tr><td>{{ contrary }}</td></tr>
                                     {% endfor %}
                                     {% endif %}
                                 </table>
@@ -165,7 +165,7 @@
                                     <table id="rvs_table" class="layout_table babaElementsTable">
                                     {% if random_variables %}
                                     {% for rv in random_variables %}
-                                    <tr><th>{{ rv }}</th></tr>
+                                    <tr><td>{{ rv }}</td></tr>
                                     {% endfor %}{% endif %}
 
                                     </table>
@@ -184,13 +184,13 @@
                 <!-- Rules -->
                     <section id="rules" class="three">
                         <div class="container">
-                            rules
+                            <h4>Rules</h4>
                             <div class="rulesScroll divBorder">
                                 <table id="rules_table" class="layout_table">
 
                                     {% if rules %}
                                     {% for rule in rules %}
-                                    <tr><th>{{ rule }}</th></tr>
+                                    <tr><td>{{ rule }}</td></tr>
                                     {% endfor %}
                                     {% endif %}
 
@@ -205,6 +205,46 @@
                         </div>
                     </section>
 
+
+                    <!-- Macro elements sections -->
+                    <section id="macro_elements_section" class="four">
+                        <div class="container" style="margin-bottom:0px">
+                            <div>
+                                <div class="macroRulesSection">
+                                    <h5>Macro Rules</h5>
+                                    <div class="macroElementsScroll macroRules divBorder">
+                                        <table id="macro_rules" class="layout_table macroElementsTable">
+                                            {% if macro_rules %}
+                                            {% for rule in macro_rules %}
+                                            <tr><td>{{ rule }}</td></tr>
+                                            {% endfor %}
+                                            {% endif %}
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="macroElementsSection">
+                                    <h5>Indicators</h5>
+                                    <div class="macroElementsScroll macroElements divBorder">
+                                        <table id="macro_elements" class="layout_table macroElementsTable">
+                                        {% if macro_elements %}
+                                        {% for elem in macro_elements %}
+                                        <tr><td>{{ elem }}</td></tr>
+                                        {% endfor %}
+                                        {% endif %}
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input_box" style="margin-top:10px">
+                                <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name %}" method="post">
+                                    {% csrf_token %}
+                                    {{ macro_rule_form }}
+                                </form>
+                            </div>
+
+                        </div>
+
+                    </section>
 				<!-- Portfolio -->
 					<!--<section id="portfolio" class="two">-->
 						<!--<div class="container">-->

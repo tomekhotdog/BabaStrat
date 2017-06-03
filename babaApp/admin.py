@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Market, DataSet, DataTick, User, TradingSettings, Trade, Portfolio, Strategy, SimulatedTrade
+from .models import Market, DataSet, DataTick, User, TradingSettings, Trade, Portfolio, Strategy, SimulatedTrade, Indicator
 
 
 admin.site.register(Market)
@@ -11,3 +11,4 @@ admin.site.register(Trade)
 admin.site.register(SimulatedTrade)
 admin.site.register(Portfolio)
 admin.site.register(Strategy)
+admin.site.register(Indicator)

@@ -9,11 +9,18 @@ class User(models.Model):
 
 
 class Market(models.Model):
-    market_name = models.CharField(max_length=200)
+    market_name = models.CharField(max_length=50)
     symbol = models.CharField(default='', max_length=30)
 
     def __str__(self):
         return self.market_name
+
+
+class Indicator(models.Model):
+    indicator_name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.indicator_name
 
 
 class Strategy(models.Model):
@@ -21,6 +28,7 @@ class Strategy(models.Model):
     market = models.ForeignKey(Market, on_delete=models.CASCADE)
     strategy_name = models.CharField(default='', max_length=30)
     framework = models.TextField(default='.')
+    framework_extension = models.TextField(default='.')
 
     def __str__(self):
         return '(' + self.market.market_name + ') ' + self.strategy_name

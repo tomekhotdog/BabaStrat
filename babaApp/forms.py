@@ -21,6 +21,12 @@ class RuleForm(forms.Form):
                            help_text='Add a rule. (BUY :- assumption, random variable, other element)')
 
 
+class MacroRuleForm(forms.Form):
+    macro_rule = forms.CharField(required=True,
+                           label='',
+                           help_text='Add a macro rule. (Uptrend :- 50DayEMA > 100DayEMA and Close > 100DayEMA)')
+
+
 trading_choices = [('yes', 'YES'), ('no', 'NO')]
 trading_options = [(0, 'BUY'), (1, 'SELL'), (2, 'BUY and SELL')]
 

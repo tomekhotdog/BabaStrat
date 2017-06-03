@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from babaSemantics import Semantics as Semantics
 from babaApp.extras import specificStyling
 from .models import Market, Strategy
-from .forms import AssumptionForm, ContraryForm, RandomVariableForm, RuleForm, SettingsForm, StrategyPreferencesSelectionForm, trading_choices, trading_options, NewStrategyForm, StrategySelectionForm, TimeIntervalSelectionForm, BackTestTimeIntervalSelectionForm
+from .forms import AssumptionForm, ContraryForm, RandomVariableForm, RuleForm, MacroRuleForm, SettingsForm, StrategyPreferencesSelectionForm, trading_choices, trading_options, NewStrategyForm, StrategySelectionForm, TimeIntervalSelectionForm, BackTestTimeIntervalSelectionForm
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 from babaApp.databaseController import controller as controller
 import marketData.services as market_data_service
@@ -18,7 +18,7 @@ FLOAT_FORMAT = "{0:.2f}"
 
 
 #     Start strategy engine loop    #
-# strategy_engine.start_strategy_task()
+strategy_engine.start_strategy_task()
 #####################################
 
 
@@ -52,12 +52,14 @@ def frameworks(request, market_name, strategy_name):
     market_list = controller.get_market_list()
 
     language, assumptions, contraries, rvs, rules = controller.get_strategy_elements(user, strategy_name)
+    indicators = controller.get_strategy_indicators(user, strategy_name)
+    macro_rules = controller.get_strategy_macro_rules(user, strategy_name)
 
     market = Market.objects.get(market_name=market_name)
     market_data_service.subscribe(market.symbol)
 
-    buy_probability = strategy_engine.get_probability(user, strategy_name, 'BUY', Semantics.SCEPTICALLY_PREFERRED)
-    sell_probability = strategy_engine.get_probability(user, strategy_name, 'SELL', Semantics.SCEPTICALLY_PREFERRED)
+    buy_probability = strategy_engine.get_probability(user.username, strategy_name, 'BUY', Semantics.SCEPTICALLY_PREFERRED)
+    sell_probability = strategy_engine.get_probability(user.username, strategy_name, 'SELL', Semantics.SCEPTICALLY_PREFERRED)
 
     # latest_price = market_data_service.get_latest_tick(framework.symbol)
 
@@ -69,6 +71,7 @@ def frameworks(request, market_name, strategy_name):
     contrary_form = ContraryForm(initial={'contrary': 'assumption, contrary'})
     random_variable_form = RandomVariableForm(initial={'random_variable': 'random variable, probability'})
     rule_form = RuleForm
+    macro_rule_form = MacroRuleForm
     new_strategy_form = NewStrategyForm
     strategy_selection_form = StrategySelectionForm()
     strategy_selection_form.fields['strategy_selection'].queryset = controller.get_strategies_for_user_and_market(user, market)
@@ -78,9 +81,11 @@ def frameworks(request, market_name, strategy_name):
                'open_positions': open_positions,
                'language': language, 'assumptions': assumptions, 'contraries': contraries,
                'random_variables': rvs, 'rules': rules,
+               'macro_elements': indicators, 'macro_rules': macro_rules,
                'assumption_form': assumption_form,
                'contrary_form': contrary_form,
                'rule_form': rule_form,
+               'macro_rule_form': macro_rule_form,
                'random_variable_form': random_variable_form,
                'new_strategy_form': new_strategy_form, 'strategy_selection_form': strategy_selection_form,
                'buy_probability': FLOAT_FORMAT.format(buy_probability),
@@ -227,25 +232,31 @@ def process_form_submission(request, strategy_name):
         form = AssumptionForm(request.POST)
         if form.is_valid():
             new_assumption = form.cleaned_data['assumption']
-            controller.extend_framework(user, strategy_name, assumption=new_assumption)
+            controller.add_framework_element(user, strategy_name, assumption=new_assumption)
 
     elif 'contrary' in request.POST:
         form = ContraryForm(request.POST)
         if form.is_valid():
             new_contrary = form.cleaned_data['contrary']
-            controller.extend_framework(user, strategy_name, contrary=new_contrary)
+            controller.add_framework_element(user, strategy_name, contrary=new_contrary)
 
     elif 'random_variable' in request.POST:
         form = RandomVariableForm(request.POST)
         if form.is_valid():
             new_rv = form.cleaned_data['random_variable']
-            controller.extend_framework(user, strategy_name, rv=new_rv)
+            controller.add_framework_element(user, strategy_name, rv=new_rv)
 
     elif 'rule' in request.POST:
         form = RuleForm(request.POST)
         if form.is_valid():
             new_rule = form.cleaned_data['rule']
-            controller.extend_framework(user, strategy_name, rule=new_rule)
+            controller.add_framework_element(user, strategy_name, rule=new_rule)
+
+    elif 'macro_rule' in request.POST:
+        form = MacroRuleForm(request.POST)
+        if form.is_valid():
+            new_macro_rule = form.cleaned_data['macro_rule']
+            controller.add_framework_extension(user, strategy_name, macro_rule=new_macro_rule)
 
 
 def process_new_strategy_form(request, market_name, strategy_name):
@@ -291,6 +302,17 @@ def strategy_performance_data(request, username, strategy_name, start_seconds, e
 
 def back_test_data(request, username, strategy_name, start_seconds, end_seconds):
     data = strategy_engine_queries.get_back_test_json(username, strategy_name, float(start_seconds), float(end_seconds))
+    return JsonResponse(data)
+
+
+def semantic_probability(request, username, strategy_name, sentence, semantics):
+    semantics_selection = Semantics.GROUNDED
+    if semantics == 'S':
+        semantics_selection = Semantics.SCEPTICALLY_PREFERRED
+    elif semantics == 'I':
+        semantics_selection = Semantics.IDEAL
+
+    data = strategy_engine_queries.get_semantic_probability(username, strategy_name, sentence, semantics_selection)
     return JsonResponse(data)
 
 

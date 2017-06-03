@@ -57,7 +57,9 @@ def update_semantic_probabilities():
     for strategy in strategies:
         username = strategy.user.username
         strategy_name = strategy.strategy_name
-        baba = Parser.BABAProgramParser(string=strategy.framework).parse()
+
+        strategy_framework = controller.get_strategy_framework(strategy, datetime.datetime.now())
+        baba = Parser.BABAProgramParser(string=strategy_framework).parse()
 
         g_probabilities = compute_semantic_probability(GROUNDED, baba)
         s_probabilities = compute_semantic_probability(SCEPTICALLY_PREFERRED, baba)
@@ -189,8 +191,8 @@ def execute_close_position(open_position):
 
 
 # Returns the probability for the corresponding framework, direction (string) and semantics
-def get_probability(user, strategy_name, direction, semantics):
-    key = user.username + '_' + strategy_name + '_' + direction
+def get_probability(username, strategy_name, direction, semantics):
+    key = username + '_' + strategy_name + '_' + direction
 
     if semantics == GROUNDED and key in __m.grounded_probabilities.keys():
         return __m.grounded_probabilities[key]

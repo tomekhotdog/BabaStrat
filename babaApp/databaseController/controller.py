@@ -1,13 +1,14 @@
-from babaApp.models import User, Market, TradingSettings, Portfolio, Trade, Strategy
+from babaApp.models import User, Market, TradingSettings, Portfolio, Trade, Strategy, Indicator
 from django.shortcuts import get_list_or_404
 from marketData import services as market_data_services
 from babaSemantics import BABAProgramParser as Parser
 from babaSemantics import Semantics as Semantics
 from babaApp.extras import applicationStrings as strings
+from frameworkExtensions import service as framework_extensions_service
 
 DELTA = 0.000001
 FLOAT_FORMAT = "{0:.2f}"
-
+NEW_LINE = '\n'
 
 # Returns god user -> for testing
 def get_user():
@@ -178,8 +179,23 @@ def get_strategy_elements(user, strategy_name):
     return [language, assumptions, contraries, rvs, rules]
 
 
+def get_strategy_indicators(user, strategy_name):
+    return Indicator.objects.all()
+
+
+def get_strategy_macro_rules(user, strategy_name):
+    strategy = Strategy.objects.filter(user=user, strategy_name=strategy_name)[0]
+    return strategy.framework_extension.split(NEW_LINE)
+
+
+def get_strategy_framework(strategy, datetime):
+    main_framework = strategy.framework
+    additional_rules = framework_extensions_service.compute_framework_rules(strategy, datetime)
+    return main_framework + ' \n ' + additional_rules
+
+
 # Append to framework string representation with the relevant element
-def extend_framework(user, strategy_name, assumption=None, contrary=None, rv=None, rule=None):
+def add_framework_element(user, strategy_name, assumption=None, contrary=None, rv=None, rule=None):
     try:
         strategy = Strategy.objects.get(user=user, strategy_name=strategy_name)
         strategy_extension = '\n'
@@ -201,3 +217,20 @@ def extend_framework(user, strategy_name, assumption=None, contrary=None, rv=Non
         print('Framework with name ' + strategy_name + ' does not exist')
     except RuntimeError:
         print('Runtime error due to string manipulation of additional element')
+
+
+# Append to framework extension with additional MacroRule
+def add_framework_extension(user, strategy_name, macro_rule=None):
+    try:
+        strategy = Strategy.objects.get(user=user, strategy_name=strategy_name)
+        strategy_extension = '\n'
+        if macro_rule is not None:
+            strategy_extension += macro_rule
+
+        strategy.framework_extension = (strategy.framework_extension + strategy_extension)
+        strategy.save()
+
+    except Strategy.DoesNotExist:
+        print('Framework with name ' + strategy_name + ' does not exist')
+    except RuntimeError:
+        print('Runtime when adding new MacroRule')

@@ -2,7 +2,11 @@ from datetime import datetime, timedelta
 from marketData import queries as market_data_queries
 from babaApp.models import Strategy, Trade, Market
 from babaApp.extras import applicationStrings
-from StrategyEngine import backtest
+from StrategyEngine import backtest, services
+from babaSemantics import Semantics
+from babaApp.models import User
+
+FLOAT_FORMAT = "{0:.2f}"
 
 
 def get_performance_json(username, strategy_name, start_seconds, end_seconds):
@@ -20,7 +24,16 @@ def get_back_test_json(username, strategy_name, start_seconds, end_seconds):
     labels, data_points = backtest.calculate_backtest_performance(username, strategy_name, start_date, end_date)
     label = strategy_name + ' (backtest)'
     return get_json(label, labels, data_points)
-    # return market_data_queries.get_json('EUR-USD', 2)
+
+
+def get_semantic_probability(username, strategy_name, sentence, semantics):
+    semantic_probability = 0
+    if sentence == 'BUY':
+        semantic_probability = services.get_probability(username, strategy_name, services.BUY, semantics)
+    elif sentence == 'SELL':
+        semantic_probability = services.get_probability(username, strategy_name, services.SELL, semantics)
+
+    return {'semantic_probability': FLOAT_FORMAT.format(semantic_probability)}
 
 
 def get_empty_json():
