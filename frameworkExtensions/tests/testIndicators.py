@@ -1,8 +1,10 @@
-from django.test import TestCase
-from babaApp.models import DataSet, DataTick
 import datetime
-from StrategyEngine import indicators
 import math
+
+from django.test import TestCase
+
+from babaApp.models import DataSet, DataTick
+from frameworkExtensions import indicators
 
 ROUNDING = 10000
 test_time_1 = datetime.date(2017, 10, 30)

@@ -18,7 +18,7 @@ FLOAT_FORMAT = "{0:.2f}"
 
 
 #     Start strategy engine loop    #
-strategy_engine.start_strategy_task()
+# strategy_engine.start_strategy_task()
 #####################################
 
 
