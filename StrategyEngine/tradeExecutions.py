@@ -1,4 +1,4 @@
-def execute_trade(instrument_symbol, quantity, direction, data_tick):
+def execute_trade(instrument_symbol, quantity, direction, price):
     t = instrument_symbol
-    v = quantity * data_tick.ask_price
+    v = quantity * price
     # TODO: log trade, make fix message?

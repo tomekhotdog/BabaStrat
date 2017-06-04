@@ -5,6 +5,7 @@ import babaSemantics.BABAProgramParser as Parser
 from babaApp.models import User, TradingSettings, Trade, SimulatedTrade, Portfolio, Strategy
 from marketData import queries as market_data_queries
 from babaApp.extras import applicationStrings, converters
+from babaApp.databaseController import controller
 
 BUY = 'BUY'
 SELL = 'SELL'
@@ -106,7 +107,8 @@ __m.ideal_probabilities = {}
 
 # Iterates through strategies and recalculates the semantic probabilities
 def calculate_semantic_probabilities(user, strategy, date):
-    baba = Parser.BABAProgramParser(string=strategy.framework).parse()
+    strategy_framework = controller.get_strategy_framework(strategy, date)
+    baba = Parser.BABAProgramParser(string=strategy_framework).parse()
 
     g_probabilities = compute_semantic_probability(GROUNDED, baba)
     s_probabilities = compute_semantic_probability(SCEPTICALLY_PREFERRED, baba)
@@ -123,21 +125,30 @@ def calculate_semantic_probabilities(user, strategy, date):
             probabilities[SELL] if SELL in probabilities.keys() else 0
 
 
-# Analyses semantic probabilities, cross referencing with
-#  user thresholds and executes trades as required.
+# Analyses open positions and closes them if required
+# A position is closed when any of three conditions are met:
+#   1) The required yield has been achieved
+#   2) The loss limit has been exceeded
+#   3) The strategy recommends taking an opposite position
 def perform_open_position_trades(user, strategy, date):
     try:
         user_trading_settings = TradingSettings.objects.get(user=user, strategy=strategy)
+
+        t = __m.grounded_probabilities
 
         for direction in [BUY, SELL]:
             if user_already_holds_position(user, strategy, direction):
                 continue
 
-            key = user.username + '_' + strategy.strategy_name + '_' + direction
-            t = __m.grounded_probabilities
+            key_root = get_user_strategy_key_root(strategy)
+            key = key_root + direction
+
+            if strategy_has_conflicting_recommendation(key_root, user_trading_settings.required_trade_confidence):
+                continue
+
             if key in __m.grounded_probabilities.keys() and \
-                            __m.grounded_probabilities[key] >= (user_trading_settings.required_trade_confidence / 100):
-                execute_open_position(user, strategy, direction, user_trading_settings, date)
+                    get_probability(user.username, strategy.strategy_name, direction, SCEPTICALLY_PREFERRED) >= (user_trading_settings.required_trade_confidence / 100):
+                    execute_open_position(user, strategy, direction, user_trading_settings, date)
 
     except TradingSettings.DoesNotExist:
         return
@@ -149,6 +160,9 @@ def perform_close_position_trades(user, strategy, date):
     open_positions = SimulatedTrade.objects.filter(user=user, open_position=True)
     for open_position in open_positions:
         trading_settings = TradingSettings.objects.get(user=user, strategy=strategy)
+
+        if strategy_recommends_opposite_position(open_position.strategy, open_position.direction, trading_settings.required_trade_confidence):
+            execute_close_position(open_position)
 
         initial_value = open_position.price * open_position.quantity
         try:
@@ -175,6 +189,37 @@ def user_already_holds_position(user, strategy, direction):
                                                        open_position=True, direction=direction_integer)
 
     return len(existing_positions) > 0
+
+
+# A strategy has conflicting recommendations when semantic probabilities for
+# both BUY and SELL are above the user specified required confidence level
+# key = string, required_confidence_level = int (0-100)
+def strategy_has_conflicting_recommendation(key, required_confidence_level):
+    confidence_decimal = required_confidence_level / 100
+    buy_probability = 0
+    if (key + 'BUY') in __m.sceptically_preferred_probabilities.keys():
+        buy_probability = __m.sceptically_preferred_probabilities[key + 'BUY']
+    sell_probability = 0
+    if (key + 'SELL') in __m.sceptically_preferred_probabilities.keys():
+        sell_probability = __m.sceptically_preferred_probabilities[key + 'SELL']
+
+    return buy_probability >= confidence_decimal and sell_probability > confidence_decimal
+
+
+# Returns whether the strategy recommends holding the opposite position.
+# (i.e. Recommends SELL position when user holds a corresponding BUY position)
+def strategy_recommends_opposite_position(strategy, inspected_position_direction, required_trade_confidence):
+    required_confidence_decimal = required_trade_confidence / 100
+
+    opposite_probability = 0
+    if inspected_position_direction == converters.trade_type_string_to_integer('BUY'):
+        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'SELL',
+                                               SCEPTICALLY_PREFERRED)
+    if inspected_position_direction == converters.trade_type_string_to_integer('SELL'):
+        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'BUY',
+                                               SCEPTICALLY_PREFERRED)
+
+    return opposite_probability > required_confidence_decimal
 
 
 # Opens a new position, updates data stores.
@@ -206,8 +251,8 @@ def execute_close_position(open_position, date):
 
 
 # Returns the probability for the corresponding framework, direction (string) and semantics
-def get_probability(user, strategy_name, direction, semantics):
-    key = user.username + '_' + strategy_name + '_' + direction
+def get_probability(username, strategy_name, direction, semantics):
+    key = username + '_' + strategy_name + '_' + direction
 
     if semantics == GROUNDED and key in __m.grounded_probabilities.keys():
         return __m.grounded_probabilities[key]
@@ -217,3 +262,7 @@ def get_probability(user, strategy_name, direction, semantics):
         return __m.ideal_probabilities[key]
     else:
         return 0  # Raise exception?
+
+
+def get_user_strategy_key_root(strategy):
+    return strategy.user.username + '_' + strategy.strategy_name + '_'

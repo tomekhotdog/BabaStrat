@@ -90,9 +90,14 @@ def perform_open_position_trades(user):
                 if user_already_holds_position(user, strategy, direction):
                     continue
 
-                key = strategy.user.username + '_' + strategy.strategy_name + '_' + direction
-                if key in __m.grounded_probabilities.keys() and \
-                        __m.grounded_probabilities[key] >= (user_trading_settings.required_trade_confidence / 100):
+                key_root = get_user_strategy_key_root(strategy)
+                key = key_root + direction
+
+                if strategy_has_conflicting_recommendation(strategy, user_trading_settings.required_trade_confidence):
+                    continue
+
+                if key in __m.sceptically_preferred_probabilities.keys() and \
+                        __m.sceptically_preferred_probabilities[key] >= (user_trading_settings.required_trade_confidence / 100):
                     execute_open_position(user, strategy, direction, user_trading_settings)
 
         except TradingSettings.DoesNotExist:
@@ -100,7 +105,10 @@ def perform_open_position_trades(user):
 
 
 # Analyses open positions and closes them if required
-# (with respect to to the required yield or loss limit)
+# A position is closed when any of three conditions are met:
+#   1) The required yield has been achieved
+#   2) The loss limit has been exceeded
+#   3) The strategy recommends taking an opposite position
 def perform_close_position_trades(user):
     open_positions = Trade.objects.filter(portfolio__user=user, open_position=True)
     for open_position in open_positions:
@@ -113,6 +121,9 @@ def perform_close_position_trades(user):
         latest_tick = market_data_service.get_latest_tick(open_position.instrument_symbol)
         current_value_per_unit = latest_tick.bid_price if position_direction == BUY else latest_tick.ask_price
         current_value = current_value_per_unit * open_position.quantity
+
+        if strategy_recommends_opposite_position(open_position.strategy, open_position.direction, trading_settings.required_trade_confidence):
+            execute_close_position(open_position)
 
         # yield threshold reached
         try:
@@ -134,6 +145,31 @@ def user_already_holds_position(user, strategy, direction):
                                               direction=direction_integer)
 
     return len(existing_positions) > 0
+
+
+# A strategy has conflicting recommendations when semantic probabilities for
+# both BUY and SELL are above the user specified required confidence level
+# key = string, required_confidence_level = int (0-100)
+def strategy_has_conflicting_recommendation(strategy, required_confidence_level):
+    confidence_decimal = required_confidence_level / 100
+    buy_probability = get_probability(strategy.user.username, strategy.strategy_name, 'BUY', SCEPTICALLY_PREFERRED)
+    sell_probability = get_probability(strategy.user.username, strategy.strategy_name, 'SELL', SCEPTICALLY_PREFERRED)
+
+    return buy_probability >= confidence_decimal and sell_probability > confidence_decimal
+
+
+# Returns whether the strategy recommends holding the opposite position.
+# (i.e. Recommends SELL position when user holds a corresponding BUY position)
+def strategy_recommends_opposite_position(strategy, inspected_position_direction, required_trade_confidence):
+    required_confidence_decimal = required_trade_confidence / 100
+
+    opposite_probability = 0
+    if inspected_position_direction == converters.trade_type_string_to_integer('BUY'):
+        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'SELL', SCEPTICALLY_PREFERRED)
+    if inspected_position_direction == converters.trade_type_string_to_integer('SELL'):
+        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'BUY', SCEPTICALLY_PREFERRED)
+
+    return opposite_probability > required_confidence_decimal
 
 
 # Opens a new position, updates data stores.
@@ -202,3 +238,7 @@ def get_probability(username, strategy_name, direction, semantics):
         return __m.ideal_probabilities[key]
     else:
         return 0  # Raise exception?
+
+
+def get_user_strategy_key_root(strategy):
+    return strategy.user.username + '_' + strategy.strategy_name + '_'
