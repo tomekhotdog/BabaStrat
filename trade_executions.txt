@@ -1,0 +1,2 @@
+Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.8738, SELL (strategy = election_speculation), 2017-06-05 09:47:23.638965
+Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.8738, SELL (strategy = election_speculation), 2017-06-05 09:51:17.195118

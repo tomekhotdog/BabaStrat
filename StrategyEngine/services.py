@@ -195,7 +195,13 @@ def execute_open_position(user, strategy, direction, trading_settings):
         )
         trade.save()
 
-        tradeExecutions.execute_trade(strategy.market.symbol, quantity, direction, price_per_unit)
+        tradeExecutions.execute_trade(strategy.strategy_name,
+                                      strategy.market.symbol,
+                                      quantity,
+                                      direction,
+                                      price_per_unit,
+                                      'OPEN',
+                                      trade.position_opened)
 
         # TODO: portfolio update - delegate to another class (in databaseController)
         # trade_unit_price = latest_price.ask_price if direction == 'BUY' else latest_price.bid_price
@@ -218,6 +224,15 @@ def execute_close_position(open_position):
     open_position.position_closed = datetime.datetime.now()
     open_position.open_position = False
     open_position.save()
+
+    tradeExecutions.execute_trade(open_position.strategy.strategy_name,
+                                  open_position.strategy.market.symbol,
+                                  open_position.quantity,
+                                  converters.trade_type_integer_to_string(open_position.direction),
+                                  open_position.close_price,
+                                  'CLOSE',
+                                  open_position.position_closed)
+
 
     # TODO: portfolio should keep unused equity - total equity is derived concept
     # trade_value = open_position.close_price * open_position.quantity

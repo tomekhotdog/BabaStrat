@@ -1,4 +1,9 @@
-def execute_trade(instrument_symbol, quantity, direction, price):
-    t = instrument_symbol
-    v = quantity * price
-    # TODO: log trade, make fix message?
+
+def execute_trade(strategy_name, instrument_symbol, quantity, direction, price, open_close, datetime):
+    with open('trade_executions.txt', 'a') as trade_log:
+
+        trade = '\nExecuted order: ' + instrument_symbol + ' (' + open_close + ')' +\
+                ' (quantity = ' + str(quantity) + ') ' + '@' + str(price) + ', ' +\
+                direction + ' (strategy = ' + strategy_name + '), ' + str(datetime)
+
+        trade_log.write(trade)
