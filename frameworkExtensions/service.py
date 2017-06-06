@@ -17,7 +17,7 @@ def compute_framework_rules(strategy, datetime):
         data_set = DataSet.objects.get(dataset_name=strategy.market.market_name)
 
         framework_extension = strategy.framework_extension
-        macro_rules = framework_extension.split(NEW_LINE)
+        macro_rules = framework_extension.splitlines()
         for rule_string in macro_rules:
             try:
                 macro_rule = macroElements.MacroRule(rule_string)

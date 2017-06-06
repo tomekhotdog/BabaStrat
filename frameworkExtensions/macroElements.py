@@ -68,8 +68,8 @@ class MacroRule:
             raise MacroElementParseException('Could not parse invalid MacroRule (does not contain :-)')
 
         operator_index = elements.index(':-')
-        self.macroRuleHead = MacroElement(' '.join(elements[:operator_index]))  # MacroElement
-        self.macroRuleBody = MacroBooleanExpr(' '.join(elements[operator_index + 1:]))  # MacroBooleanExpr
+        self.macroRuleHead = MacroElement(' '.join(elements[:operator_index]).strip())  # MacroElement
+        self.macroRuleBody = MacroBooleanExpr(' '.join(elements[operator_index + 1:]).strip())  # MacroBooleanExpr
 
     def calculate(self, data_set, datetime):
         return self.macroRuleBody.calculate(data_set, datetime)
@@ -155,8 +155,8 @@ class MacroExpr:
                 raise MacroElementParseException('Could not parse MacroExpr operator: ' + expr_string)
 
             self.operator = MacroExprOperator(elements[operator_index])
-            self.operand_1 = MacroExpr(' '.join(elements[:operator_index]))
-            self.operand_2 = MacroExpr(' '.join(elements[operator_index + 1:]))
+            self.operand_1 = MacroExpr(' '.join(elements[:operator_index]).strip())
+            self.operand_2 = MacroExpr(' '.join(elements[operator_index + 1:]).strip())
         else:
             try:
                 self.expression = float(expr_string)
@@ -182,19 +182,19 @@ class MacroBooleanExpr:
         elements = expr_string.split(' ')
         if NOT in elements and elements[0] == NOT:
             self.operator = MacroBooleanOperator(elements[0])
-            self.operand_1 = MacroBooleanExpr(' '.join(elements[1:]))
+            self.operand_1 = MacroBooleanExpr(' '.join(elements[1:]).strip())
 
         elif AND in elements:
             operator_index = elements.index(AND)
             self.operator = MacroBooleanOperator(elements[operator_index])
-            self.operand_1 = MacroBooleanExpr(' '.join(elements[:operator_index]))
-            self.operand_2 = MacroBooleanExpr(' '.join(elements[operator_index + 1:]))
+            self.operand_1 = MacroBooleanExpr(' '.join(elements[:operator_index]).strip())
+            self.operand_2 = MacroBooleanExpr(' '.join(elements[operator_index + 1:]).strip())
 
         elif OR in elements:
             operator_index = elements.index(OR)
             self.operator = MacroBooleanOperator(elements[operator_index])
-            self.operand_1 = MacroBooleanExpr(' '.join(elements[:operator_index]))
-            self.operand_2 = MacroBooleanExpr(' '.join(elements[operator_index + 1:]))
+            self.operand_1 = MacroBooleanExpr(' '.join(elements[:operator_index]).strip())
+            self.operand_2 = MacroBooleanExpr(' '.join(elements[operator_index + 1:]).strip())
 
         elif LT in elements or LE in elements or GT in elements or GE in elements or EQ in elements or NE in elements:
             operator_index = 0
@@ -212,8 +212,8 @@ class MacroBooleanExpr:
                 operator_index = elements.index(NE)
 
             self.operator = MacroBooleanOperator(elements[operator_index])
-            self.operand_1 = MacroExpr(' '.join(elements[:operator_index]))
-            self.operand_2 = MacroExpr(' '.join(elements[operator_index + 1:]))
+            self.operand_1 = MacroExpr(' '.join(elements[:operator_index]).strip())
+            self.operand_2 = MacroExpr(' '.join(elements[operator_index + 1:]).strip())
         else:
             raise MacroElementParseException('Could not parse MacroBooleanExpr: ' + expr_string)
 

@@ -1,4 +1,4 @@
-POLLING_TIME = 20000
+POLLING_TIME = 1000 * 60 * 30 // Every 30 mins
 INSTRUMENT_NAME = ''
 DURATION = '/2'
 MARKET_DATA_URL = "/babaApp/marketdata/"

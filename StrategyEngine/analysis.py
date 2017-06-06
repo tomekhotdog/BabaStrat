@@ -23,10 +23,22 @@ def get_strategy_performance_data_url(username, strategy_name, start_date, end_d
     return '/babaApp/data/performance/' + username + '/' + strategy_name + '/' + time_interval_url_string
 
 
+def get_compare_strategy_performance_data_url(username, strategy_name, compare_strategy_name, start_date, end_date):
+    time_interval_url_string = get_time_interval_string(start_date, end_date)
+
+    return '/babaApp/data/compare_performance/' + username + '/' + strategy_name + '/' + compare_strategy_name + '/' + time_interval_url_string
+
+
 def get_back_test_data_url(username, strategy_name, start_date, end_date):
     time_interval_url_string = get_time_interval_string(start_date, end_date)
 
     return '/babaApp/data/back_test/' + username + '/' + strategy_name + '/' + time_interval_url_string
+
+
+def get_compare_back_test_data_url(username, strategy_name, compare_strategy_name, start_date, end_date):
+    time_interval_url_string = get_time_interval_string(start_date, end_date)
+
+    return '/babaApp/data/compare_back_test/' + username + '/' + strategy_name + '/' + compare_strategy_name + '/' + time_interval_url_string
 
 
 def get_default_back_test_data_url():

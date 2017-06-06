@@ -17,6 +17,15 @@ def get_performance_json(username, strategy_name, start_seconds, end_seconds):
     return get_json(strategy_name + ' performance', labels, data_points)
 
 
+def get_compare_performance_json(username, strategy_name, compare_strategy_name, start_seconds, end_seconds):
+    start_date = datetime.utcfromtimestamp(start_seconds)
+    end_date = datetime.utcfromtimestamp(end_seconds)
+
+    labels, data_points = calculate_strategy_performance(username, strategy_name, start_date, end_date)
+    _, compare_data_points = calculate_strategy_performance(username, compare_strategy_name, start_date, end_date)
+    return get_json(strategy_name + ' performance', labels, data_points, additional_data=compare_data_points, additional_label=(compare_strategy_name + ' performance'))
+
+
 def get_back_test_json(username, strategy_name, start_seconds, end_seconds):
     start_date = datetime.utcfromtimestamp(start_seconds)
     end_date = datetime.utcfromtimestamp(end_seconds)
@@ -24,6 +33,15 @@ def get_back_test_json(username, strategy_name, start_seconds, end_seconds):
     labels, data_points = backtest.calculate_backtest_performance(username, strategy_name, start_date, end_date)
     label = strategy_name + ' (backtest)'
     return get_json(label, labels, data_points)
+
+
+def get_compare_back_test_json(username, strategy_name, compare_strategy_name, start_seconds, end_seconds):
+    start_date = datetime.utcfromtimestamp(start_seconds)
+    end_date = datetime.utcfromtimestamp(end_seconds)
+
+    labels, data_points = backtest.calculate_backtest_performance(username, strategy_name, start_date, end_date)
+    _, compare_data_points = backtest.calculate_backtest_performance(username, compare_strategy_name, start_date, end_date)
+    return get_json(strategy_name + ' (backtest)', labels, data_points, additional_data=compare_data_points, additional_label=(compare_strategy_name + ' (backtest)'))
 
 
 def get_semantic_probability(username, strategy_name, sentence, semantics):
@@ -41,7 +59,7 @@ def get_empty_json():
     chart_data = []
     datasets = [{
         'label': '',
-        'fillColor': 'rgba(220,220,220,0.2)',
+        'fillColor': 'rgba(163,209,255,1.0)',
         'strokeColor': "rgba(220,220,220,1)",
         'pointColor': "rgba(226,118,137,1)",
         'pointStrokeColor': "#fff",
@@ -57,21 +75,29 @@ def get_empty_json():
     return {'labels': labels, 'datasets': datasets}
 
 
-def get_json(label, labels, chart_data):
+def get_json(label, labels, chart_data, additional_data=None, additional_label=None):
     datasets = [{
         'label': label,
-        'fillColor': 'rgba(220,220,220,0.2)',
-        'strokeColor': "rgba(220,220,220,1)",
-        'pointColor': "rgba(226,118,137,1)",
-        'pointStrokeColor': "#fff",
-        'pointHighlightFill': "#fff",
-        'pointHighlightStroke': "rgba(220,220,220,1)",
-        'pointHoverBackgroundCover': "rgba(226, 118, 137, 1)",
-        'pointHoverBorderColor': "rgba(226, 118, 137, 1)",
         'lineTension': 0,
+        'backgroundColor': "rgba(163,209,255,0.5)",
+        'color': "rgba(163,209,255,1.0)",
         'cubicInterpolationMode': 'default',
         'data': chart_data
-    }]
+        }
+    ]
+
+    if additional_data is not None:
+        additional_dataset = {
+            'label': additional_label,
+            'lineTension': 0,
+            'backgroundColor': "rgba(190,139,155,0.5)",
+            'color': "rgba(163,209,255,1.0)",
+            'cubicInterpolationMode': 'default',
+            'data': additional_data
+        }
+
+        datasets.append(additional_dataset)
+
     return {'labels': labels, 'datasets': datasets}
 
 

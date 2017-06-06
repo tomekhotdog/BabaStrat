@@ -10,7 +10,7 @@ from babaApp.databaseController import controller as controller
 import marketData.services as market_data_service
 import StrategyEngine.services as strategy_engine
 import StrategyEngine.queries as strategy_engine_queries
-from StrategyEngine import analysis
+from StrategyEngine import analysis, backtest
 
 POST = 'POST'
 EMPTY = ''
@@ -18,7 +18,11 @@ FLOAT_FORMAT = "{0:.2f}"
 
 
 #     Start strategy engine loop    #
-strategy_engine.start_strategy_task()
+# strategy_engine.start_strategy_task()
+#####################################
+# task
+# backtest.modify_strategies()
+# backtest.back_test_strategies()
 #####################################
 
 
@@ -59,7 +63,7 @@ def frameworks(request, market_name, strategy_name):
     market_data_service.subscribe(market.symbol)
 
     buy_probability = strategy_engine.get_probability(user.username, strategy_name, 'BUY', Semantics.SCEPTICALLY_PREFERRED)
-    sell_probability = strategy_engine.get_probability(user.username, strategy_name, 'SELL', Semantics.SCEPTICALLY_PREFERRED)
+    sell_probability = strategy_engine. get_probability(user.username, strategy_name, 'SELL', Semantics.SCEPTICALLY_PREFERRED)
 
     # latest_price = market_data_service.get_latest_tick(framework.symbol)
 
@@ -194,6 +198,9 @@ def analyse(request, username, strategy_name):
                                                                                            strategy_name,
                                                                                            strategy_chart_start_date,
                                                                                            strategy_chart_end_date)
+                compare_strategy = time_interval_form.cleaned_data['compare_strategy']
+                if compare_strategy:
+                    strategy_performance_data_url = analysis.get_compare_strategy_performance_data_url(username, strategy_name, compare_strategy.strategy_name, strategy_chart_start_date, strategy_chart_end_date)
 
         if 'test_start_date' in request.POST:
             back_test_time_interval_form = BackTestTimeIntervalSelectionForm(request.POST)
@@ -204,6 +211,10 @@ def analyse(request, username, strategy_name):
                                                                      strategy_name,
                                                                      back_test_start_date,
                                                                      back_test_end_date)
+                test_compare_strategy = back_test_time_interval_form.cleaned_data['test_compare_strategy']
+                if test_compare_strategy:
+                    back_test_data_url = analysis.get_compare_back_test_data_url(username, strategy_name, test_compare_strategy.strategy_name, back_test_start_date, back_test_end_date)
+
 
     market = controller.get_market_for_strategy_name(user, strategy_name)
     markets = controller.get_market_list()
@@ -300,8 +311,18 @@ def strategy_performance_data(request, username, strategy_name, start_seconds, e
     return JsonResponse(data)
 
 
+def compare_strategy_performance_data(request, username, strategy_name, compare_strategy_name, start_seconds, end_seconds):
+    data = strategy_engine_queries.get_compare_performance_json(username, strategy_name, compare_strategy_name, float(start_seconds), float(end_seconds))
+    return JsonResponse(data)
+
+
 def back_test_data(request, username, strategy_name, start_seconds, end_seconds):
     data = strategy_engine_queries.get_back_test_json(username, strategy_name, float(start_seconds), float(end_seconds))
+    return JsonResponse(data)
+
+
+def compare_back_test_data(request, username, strategy_name, compare_strategy_name, start_seconds, end_seconds):
+    data = strategy_engine_queries.get_compare_back_test_json(username, strategy_name, compare_strategy_name, float(start_seconds), float(end_seconds))
     return JsonResponse(data)
 
 

@@ -6,9 +6,11 @@ from babaApp.models import User, TradingSettings, Trade, SimulatedTrade, Portfol
 from marketData import queries as market_data_queries
 from babaApp.extras import applicationStrings, converters
 from babaApp.databaseController import controller
+from marketData import queries, services
 
 BUY = 'BUY'
 SELL = 'SELL'
+FLOAT_FORMAT = "{0:.4f}"
 
 
 # Returns a list of labels and data points representing the back
@@ -33,9 +35,12 @@ def simulate_strategy_execution(user, strategy, start_date, end_date, recalculat
 
     current_date = start_date
     while current_date <= end_date:
-        calculate_semantic_probabilities(user, strategy, current_date)
-        perform_open_position_trades(user, strategy, current_date)
-        perform_close_position_trades(user, strategy, current_date)
+        try:
+            calculate_semantic_probability(user, strategy, current_date, IDEAL)
+            perform_open_position_trades(user, strategy, current_date)
+            perform_close_position_trades(user, strategy, current_date)
+        except queries.MarketDataUnavailable:
+            pass
 
         current_date += recalculation_interval
 
@@ -100,29 +105,18 @@ class ModuleElements:
 
 __m = ModuleElements()
 
-__m.grounded_probabilities = {}
-__m.sceptically_preferred_probabilities = {}
-__m.ideal_probabilities = {}
+__m.probabilities = {}
 
 
 # Iterates through strategies and recalculates the semantic probabilities
-def calculate_semantic_probabilities(user, strategy, date):
+def calculate_semantic_probability(user, strategy, date, semantics):
     strategy_framework = controller.get_strategy_framework(strategy, date)
     baba = Parser.BABAProgramParser(string=strategy_framework).parse()
 
-    g_probabilities = compute_semantic_probability(GROUNDED, baba)
-    s_probabilities = compute_semantic_probability(SCEPTICALLY_PREFERRED, baba)
-    i_probabilities = compute_semantic_probability(IDEAL, baba)
+    probabilities = compute_semantic_probability(semantics, baba)
 
-    store_probability_tuples = [(__m.grounded_probabilities, g_probabilities),
-                                (__m.sceptically_preferred_probabilities, s_probabilities),
-                                (__m.ideal_probabilities, i_probabilities)]
-
-    for (store, probabilities) in store_probability_tuples:
-        store[user.username + '_' + strategy.strategy_name + '_' + BUY] = \
-            probabilities[BUY] if BUY in probabilities.keys() else 0
-        store[user.username + '_' + strategy.strategy_name + '_' + SELL] = \
-            probabilities[SELL] if SELL in probabilities.keys() else 0
+    __m.probabilities[user.username + '_' + strategy.strategy_name + '_' + BUY] = probabilities[BUY] if BUY in probabilities.keys() else 0
+    __m.probabilities[user.username + '_' + strategy.strategy_name + '_' + SELL] = probabilities[SELL] if SELL in probabilities.keys() else 0
 
 
 # Analyses open positions and closes them if required
@@ -134,20 +128,19 @@ def perform_open_position_trades(user, strategy, date):
     try:
         user_trading_settings = TradingSettings.objects.get(user=user, strategy=strategy)
 
-        t = __m.grounded_probabilities
+        # t = __m.probabilities
+        key_root = get_user_strategy_key_root(strategy)
+        if strategy_has_conflicting_recommendation(key_root, user_trading_settings.required_trade_confidence):
+            return
 
         for direction in [BUY, SELL]:
             if user_already_holds_position(user, strategy, direction):
                 continue
 
-            key_root = get_user_strategy_key_root(strategy)
             key = key_root + direction
 
-            if strategy_has_conflicting_recommendation(key_root, user_trading_settings.required_trade_confidence):
-                continue
-
-            if key in __m.grounded_probabilities.keys() and \
-                    get_probability(user.username, strategy.strategy_name, direction, SCEPTICALLY_PREFERRED) >= (user_trading_settings.required_trade_confidence / 100):
+            if key in __m.probabilities.keys() and \
+                    get_probability(user.username, strategy.strategy_name, direction) >= (user_trading_settings.required_trade_confidence / 100):
                     execute_open_position(user, strategy, direction, user_trading_settings, date)
 
     except TradingSettings.DoesNotExist:
@@ -155,7 +148,7 @@ def perform_open_position_trades(user, strategy, date):
 
 
 # Analyses open positions and closes them if required
-# (with respect to to the required yield or loss limit)
+# (with respect to the required yield or loss limit)
 def perform_close_position_trades(user, strategy, date):
     open_positions = SimulatedTrade.objects.filter(user=user, open_position=True)
     for open_position in open_positions:
@@ -197,11 +190,11 @@ def user_already_holds_position(user, strategy, direction):
 def strategy_has_conflicting_recommendation(key, required_confidence_level):
     confidence_decimal = required_confidence_level / 100
     buy_probability = 0
-    if (key + 'BUY') in __m.sceptically_preferred_probabilities.keys():
-        buy_probability = __m.sceptically_preferred_probabilities[key + 'BUY']
+    if (key + 'BUY') in __m.probabilities.keys():
+        buy_probability = __m.probabilities[key + 'BUY']
     sell_probability = 0
-    if (key + 'SELL') in __m.sceptically_preferred_probabilities.keys():
-        sell_probability = __m.sceptically_preferred_probabilities[key + 'SELL']
+    if (key + 'SELL') in __m.probabilities.keys():
+        sell_probability = __m.probabilities[key + 'SELL']
 
     return buy_probability >= confidence_decimal and sell_probability > confidence_decimal
 
@@ -213,11 +206,9 @@ def strategy_recommends_opposite_position(strategy, inspected_position_direction
 
     opposite_probability = 0
     if inspected_position_direction == converters.trade_type_string_to_integer('BUY'):
-        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'SELL',
-                                               SCEPTICALLY_PREFERRED)
+        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'SELL')
     if inspected_position_direction == converters.trade_type_string_to_integer('SELL'):
-        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'BUY',
-                                               SCEPTICALLY_PREFERRED)
+        opposite_probability = get_probability(strategy.user.username, strategy.strategy_name, 'BUY')
 
     return opposite_probability > required_confidence_decimal
 
@@ -239,6 +230,7 @@ def execute_open_position(user, strategy, direction, trading_settings, date):
         position_opened=date
     )
     simulated_trade.save()
+    log_trade_execution(strategy, direction, 'OPEN', current_price, quantity, date)
 
 
 def execute_close_position(open_position, date):
@@ -249,20 +241,94 @@ def execute_close_position(open_position, date):
     open_position.open_position = False
     open_position.save()
 
+    log_trade_execution(open_position.strategy, converters.trade_type_integer_to_string(open_position.direction),
+                        'CLOSE', open_position.close_price, open_position.quantity, date)
+
 
 # Returns the probability for the corresponding framework, direction (string) and semantics
-def get_probability(username, strategy_name, direction, semantics):
+def get_probability(username, strategy_name, direction):
     key = username + '_' + strategy_name + '_' + direction
 
-    if semantics == GROUNDED and key in __m.grounded_probabilities.keys():
-        return __m.grounded_probabilities[key]
-    elif semantics == SCEPTICALLY_PREFERRED and key in __m.sceptically_preferred_probabilities.keys():
-        return __m.sceptically_preferred_probabilities[key]
-    elif semantics == IDEAL and key in __m.ideal_probabilities.keys():
-        return __m.ideal_probabilities[key]
+    if key in __m.probabilities.keys():
+        return __m.probabilities[key]
     else:
         return 0  # Raise exception?
 
 
 def get_user_strategy_key_root(strategy):
     return strategy.user.username + '_' + strategy.strategy_name + '_'
+
+
+###################################
+# Long running simulation  ########
+###################################
+
+import json
+
+
+def log_trade_execution(strategy, direction, open_close, price, quantity, date):
+    with open('backtest_simulations_trade_log.txt', 'a') as file:
+        execution = '(' + strategy.strategy_name + ') ' + direction + ' ' + '(' + open_close + ') ' + str(quantity) + ' @' + FLOAT_FORMAT.format(price) + ' (' + str(date) + ')'
+        file.write(execution + '\n')
+
+strategies = ['audjpy_trends',
+                  'audusd_trends',
+                  'xauusd_trends',
+                  'xagusd_trends',
+                  'usdjpy_trends',
+                  'usdchf_trends',
+                  'usdcad_trends',
+                  'nzdusd_trends',
+                  'gbpusd_trends',
+                  'gbpjpy_trends',
+                  'gbpchf_trends',
+                  'eurusd_trends',
+                  'eurjpy_trends',
+                  'eurgbp_trends',
+                  'eurchf_trends',
+                  'chfjpy_trends',
+                  'audusd_trends',
+                  'audjpy_trends'
+                  ]
+
+framework = "myRule(BUY , [ Uptrend, UptrendConfidence]). \n" \
+            "myRV(UptrendConfidence, 0.98). \n" \
+            "myRule(SELL , [ Downtrend])."
+
+framework_extension = "Downtrend :- 50DayEMA < 100DayEMA and Close < 100DayEMA \n" \
+                      "Uptrend :- 50DayEMA > 100DayEMA and Close > 100DayEMA"
+
+cpy = 4
+cpl = 4
+
+
+def modify_strategies():
+    for s in strategies:
+        strategy = Strategy.objects.get(strategy_name=s)
+        strategy.framework = framework
+        strategy.framework_extension = framework_extension
+        strategy.save()
+
+        trading_settings = TradingSettings.objects.get(strategy=strategy)
+        trading_settings.close_position_yield = cpy
+        trading_settings.close_position_loss_limit = cpl
+        trading_settings.save()
+
+
+def back_test_strategies():
+    with open('backtest_simulations.txt', 'a') as file:
+        days = 15
+        start_date = datetime.now() - timedelta(days=days)
+        end_date = datetime.now()
+
+        for s in strategies:
+            strategy = Strategy.objects.get(strategy_name=s)
+
+            file.write(s + ' simulation for ' + str(days) + ' (days)')
+            labels, data_points = calculate_backtest_performance('tomasz', s, start_date, end_date)
+            file.write(json.dumps(data_points) + '\n')
+
+            latest_price = services.get_latest_price(strategy.market.symbol)
+            file.write('latest price for ' + strategy.market.symbol + ': ' + str(latest_price))
+
+            file.write('\n\n')

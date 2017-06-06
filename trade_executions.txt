@@ -1,2 +1,4 @@
 Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.8738, SELL (strategy = election_speculation), 2017-06-05 09:47:23.638965
 Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.8738, SELL (strategy = election_speculation), 2017-06-05 09:51:17.195118
+Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.8738, SELL (strategy = CorbynWin), 2017-06-05 15:16:23.742192
+Executed order: AUD_JPY (OPEN) (quantity = 1000) @82.645, SELL (strategy = audjpy_trends), 2017-06-05 22:27:37.191247

@@ -85,6 +85,12 @@ class NewStrategyForm(forms.Form):
 class TimeIntervalSelectionForm(forms.Form):
     start_date = forms.DateField()
     end_date = forms.DateField()
+    compare_strategy = forms.ModelChoiceField(
+        queryset=Strategy.objects,
+        empty_label=' ',
+        label='Compare strategy',
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super(TimeIntervalSelectionForm, self).__init__(*args, **kwargs)
@@ -95,6 +101,12 @@ class TimeIntervalSelectionForm(forms.Form):
 class BackTestTimeIntervalSelectionForm(forms.Form):
     test_start_date = forms.DateTimeField(label='Start date')
     test_end_date = forms.DateTimeField(label='End date')
+    test_compare_strategy = forms.ModelChoiceField(
+        queryset=Strategy.objects,
+        empty_label=' ',
+        label='Compare strategy',
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         super(BackTestTimeIntervalSelectionForm, self).__init__(*args, **kwargs)

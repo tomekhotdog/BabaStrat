@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^marketdata/(?P<instrument_name>[\w-]+)/(?P<duration>[\w]+)/$', views.chart_data, name='chart_data'),
     url(r'^data/empty/$', views.empty, name='empty'),
     url(r'^data/performance/(?P<username>[\w_-|\W]+)/(?P<strategy_name>[\w_-|\W]+)/(?P<start_seconds>[\w\.]+)/(?P<end_seconds>[\w\.]+)/$', views.strategy_performance_data, name='strategy_performance_data'),
+    url(r'^data/compare_performance/(?P<username>[\w_-|\W]+)/(?P<strategy_name>[\w_-|\W]+)/(?P<compare_strategy_name>[\w_-|\W]+)/(?P<start_seconds>[\w\.]+)/(?P<end_seconds>[\w\.]+)/$', views.compare_strategy_performance_data, name='strategy_performance_data'),
     url(r'^data/back_test/(?P<username>[\w_-|\W]+)/(?P<strategy_name>[\w_-|\W]+)/(?P<start_seconds>[\w\.]+)/(?P<end_seconds>[\w\.]+)/$', views.back_test_data, name='back_test_data'),
+    url(r'^data/compare_back_test/(?P<username>[\w_-|\W]+)/(?P<strategy_name>[\w_-|\W]+)/(?P<compare_strategy_name>[\w_-|\W]+)/(?P<start_seconds>[\w\.]+)/(?P<end_seconds>[\w\.]+)/$', views.compare_back_test_data, name='strategy_performance_data'),
     url(r'^data/semantic_probability/(?P<username>[\w_-|\W]+)/(?P<strategy_name>[\w_-|\W]+)/(?P<sentence>[\w]+)/(?P<semantics>[\w])/$', views.semantic_probability, name='semantic_probability')
 ]

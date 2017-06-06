@@ -51,22 +51,15 @@ def queryset_to_json(queryset, label):
     labels = []
     chart_data = []
     for res in queryset:
-        # print(res) # access elements: res.tick_time, res.price
 
-        labels.append(' ') # Empty label - do some custom logic here
+        labels.append(res.tick_time.date())
         price_point = (res.bid_price + res.ask_price) / 2
         chart_data.append(str(price_point))
 
     datasets = [{
         'label': label,
-        'fillColor': 'rgba(220,220,220,0.2)',
-        'strokeColor': "rgba(220,220,220,1)",
-        'pointColor': "rgba(226,118,137,1)",
-        'pointStrokeColor': "#fff",
-        'pointHighlightFill': "#fff",
-        'pointHighlightStroke': "rgba(220,220,220,1)",
-        'pointHoverBackgroundCover': "rgba(226, 118, 137, 1)",
-        'pointHoverBorderColor': "rgba(226, 118, 137, 1)",
+        'backgroundColor': "rgba(163,209,255,0.5)",
+        'color': "rgba(163,209,255,1.0)",
         'lineTension': 0,
         'cubicInterpolationMode': 'default',
         'data': chart_data

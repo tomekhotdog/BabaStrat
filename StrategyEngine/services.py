@@ -8,7 +8,7 @@ from marketData import services as market_data_service
 from babaApp.extras import converters
 from StrategyEngine import tradeExecutions, portfolioManagement
 
-RECALCULATION_INTERVAL = 30
+RECALCULATION_INTERVAL = 60  # Once a minute
 
 BUY = 'BUY'
 SELL = 'SELL'
