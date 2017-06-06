@@ -15,10 +15,11 @@ from StrategyEngine import analysis, backtest
 POST = 'POST'
 EMPTY = ''
 FLOAT_FORMAT = "{0:.2f}"
+CHOSEN_SEMANTICS = 'I'
 
 
 #     Start strategy engine loop    #
-# strategy_engine.start_strategy_task()
+strategy_engine.start_strategy_task()
 #####################################
 # task
 # backtest.modify_strategies()
@@ -65,6 +66,9 @@ def frameworks(request, market_name, strategy_name):
     buy_probability = strategy_engine.get_probability(user.username, strategy_name, 'BUY', Semantics.SCEPTICALLY_PREFERRED)
     sell_probability = strategy_engine. get_probability(user.username, strategy_name, 'SELL', Semantics.SCEPTICALLY_PREFERRED)
 
+    buy_probability_url = analysis.get_semantic_probability_url(user.username, strategy_name, 'BUY', CHOSEN_SEMANTICS)
+    sell_probability_url = analysis.get_semantic_probability_url(user.username, strategy_name, 'SELL', CHOSEN_SEMANTICS)
+
     # latest_price = market_data_service.get_latest_tick(framework.symbol)
 
     open_positions = controller.get_open_positions(user, market=market)
@@ -95,7 +99,9 @@ def frameworks(request, market_name, strategy_name):
                'buy_probability': FLOAT_FORMAT.format(buy_probability),
                'sell_probability': FLOAT_FORMAT.format(sell_probability),
                'total_equity': total_equity,
-               'total_equity_percentage_change': total_equity_percentage_change}
+               'total_equity_percentage_change': total_equity_percentage_change,
+               'buy_probability_url': buy_probability_url,
+               'sell_probability_url': sell_probability_url}
 
     return render(request, 'babaApp/frameworks.html', context)
 

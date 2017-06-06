@@ -14,7 +14,7 @@
 		<!--[if lte IE 8]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie8.css' %}" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie9.css' %}" /><![endif]-->
 	</head>
-	<body onLoad='setupChartPolling()'>
+	<body onLoad='setupPolling()'>
         <!-- Header: (sidebar) -->
             {% include "babaApp/sideBar.html" %}
         <!-- end of sidebar -->
@@ -76,12 +76,14 @@
                 <!-- Strategy_confidence -->
                     <section id="strategy_confidence" class="two">
                         <div class="container">
+                            <p id="buy_probability_url" hidden>{{buy_probability_url}}</p>
+                            <p id="sell_probability_url" hidden>{{sell_probability_url}}</p>
                             <table id="strategy_confidence_table" class="layout_table">
                                 <tr>
                                     <td><h4 class="button">BUY</h4></td>
-                                    <td><h2>{{ buy_probability }}</h2></td>
+                                    <td><h2 id="buy_probability_cell">{{ buy_probability }}</h2></td>
 									<td><div class="verticalDivider"></div></td>
-									<td><h2>{{ sell_probability }}</h2></td>
+									<td><h2 id="sell_probability_cell">{{ sell_probability }}</h2></td>
                                     <td><h4 class="button">SELL</h4></td>
                                 </tr>
                             </table>

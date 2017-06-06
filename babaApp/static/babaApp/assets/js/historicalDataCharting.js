@@ -1,4 +1,5 @@
 POLLING_TIME = 1000 * 60 * 30 // Every 30 mins
+PROBABILITY_POLLING_TIME = 1000 * 60 // Once a minute
 INSTRUMENT_NAME = ''
 DURATION = '/2'
 MARKET_DATA_URL = "/babaApp/marketdata/"
@@ -13,7 +14,7 @@ function footerButtonClick() {
 }
 
 // Polling server for data to populate chart
-function setupChartPolling() {
+function setupPolling() {
 
     function fetchData() {
         function onDataReceived(data) {
@@ -34,7 +35,42 @@ function setupChartPolling() {
         setTimeout(fetchData, POLLING_TIME)
     }
 
+    function fetchProbabilityValues() {
+        function onBuyProbabilityReceived(data) {
+            document.getElementById('buy_probability_cell').innerHTML = data['semantic_probability']
+        }
+
+        function onSellProbabilityReceived(data) {
+            document.getElementById('sell_probability_cell').innerHTML = data['semantic_probability']
+        }
+
+        URL = MARKET_DATA_URL.concat(INSTRUMENT_NAME).concat(DURATION)
+        buy_url = document.getElementById('buy_probability_url').innerHTML
+        sell_url = document.getElementById('sell_probability_url').innerHTML
+
+        $.ajax({
+            url: buy_url,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                onBuyProbabilityReceived(data)
+            }
+        });
+
+        $.ajax({
+            url: sell_url,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                onSellProbabilityReceived(data)
+            }
+        });
+
+        setTimeout(fetchProbabilityValues, PROBABILITY_POLLING_TIME)
+    }
+
     fetchData()
+    fetchProbabilityValues()
 }
 
 var lineChart = null
@@ -84,7 +120,7 @@ function chartView(id) {
         DURATION = '/4'
     }
 
-    setupChartPolling()
+    setupPolling()
 }
 
 // URLs to be encoded in hidden html elements, set through POST submissions

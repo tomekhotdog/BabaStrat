@@ -17,6 +17,10 @@ def get_default_back_test_end_date():
     return datetime.now()
 
 
+def get_semantic_probability_url(username, strategy_name, sentence, semantics_letter):
+    return '/babaApp/data/semantic_probability/' + username + '/' + strategy_name + '/' + sentence + '/' + semantics_letter
+
+
 def get_strategy_performance_data_url(username, strategy_name, start_date, end_date):
     time_interval_url_string = get_time_interval_string(start_date, end_date)
 
