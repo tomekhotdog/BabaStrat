@@ -155,7 +155,7 @@ def perform_close_position_trades(user, strategy, date):
         trading_settings = TradingSettings.objects.get(user=user, strategy=strategy)
 
         if strategy_recommends_opposite_position(open_position.strategy, open_position.direction, trading_settings.required_trade_confidence):
-            execute_close_position(open_position)
+            execute_close_position(open_position, date)
 
         initial_value = open_position.price * open_position.quantity
         try:
@@ -317,7 +317,7 @@ def modify_strategies():
 
 def back_test_strategies():
     with open('backtest_simulations.txt', 'a') as file:
-        days = 15
+        days = 500
         start_date = datetime.now() - timedelta(days=days)
         end_date = datetime.now()
 
