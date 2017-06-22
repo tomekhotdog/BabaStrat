@@ -525,7 +525,7 @@ def string_representation(baba):
     language = [str(elem) for elem in baba.language]
     assumptions = [str(elem) for elem in baba.assumptions]
     contrary_elems = [str(baba.contraries[elem]) for elem in baba.contraries]
-    rvs = [str(elem) for elem in baba.random_variables]
+    rvs = [(str(elem) + ', ' + str(baba.BN.p(elem))) for elem in baba.random_variables]
     rules = [str(elem) for elem in baba.rules]
 
     return language, assumptions, contrary_elems, rvs, rules

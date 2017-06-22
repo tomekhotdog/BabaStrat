@@ -76,6 +76,16 @@
         height: 50px;
     }
 
+    table.randomVariablesTableScroll {
+        margin: 0;
+        height: 500px;
+        overflow: auto;
+    }
+
+    table.randomVariablesTable {
+        height: 500px;
+    }
+
     table.settingsOptions {
         font-size: 15em;
     }
@@ -113,6 +123,14 @@
 		font-size: 0.7em;
 		background: url("images/currency.png") 5% 0.9em no-repeat;
 		color: #888;
+    }
+
+    button.delete_element {
+        padding: 5px 10px 20px 10px;
+        height: 100%;
+        width: 100%;
+        background: url("images/delete_icon.png") no-repeat;
+        background-color: rgba(0,0,0,0);
     }
 
     div.divBorder {

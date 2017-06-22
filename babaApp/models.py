@@ -28,10 +28,10 @@ class Strategy(models.Model):
     market = models.ForeignKey(Market, on_delete=models.CASCADE)
     strategy_name = models.CharField(default='', max_length=30)
     framework = models.TextField(default='.')
-    framework_extension = models.TextField(default='.')
+    framework_extension = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return '(' + self.market.market_name + ') ' + self.strategy_name
+        return '(' + self.market.market_name + ') ' + str(self.strategy_name)
 
 
 class DataSet(models.Model):

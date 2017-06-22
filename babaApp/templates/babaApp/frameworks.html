@@ -54,18 +54,22 @@
                         </div>
                         <div id="strategy_options">
                             <!--<form role="form" action="{% url 'babaApp:settings' %}{{ selected_framework }}/" method="post">-->
-                            <form role="form" action="{% url 'babaApp:frameworks_with_market' market_name=market_name %}" method="post" style="width:20%;height:100%;float:left;">
+                            <form role="form" action="{% url 'babaApp:frameworks_with_market' market_name=market_name %}" method="post" style="width:15%;height:100%;float:left;">
                                 {% csrf_token %}
                                 {{ strategy_selection_form.strategy_selection }}
                             </form>
-                            <button style="width:20%;float:left;margin:12px 0 0 5%" onclick="overlay()">New Strategy</button>
-                            <form action="{% url 'babaApp:analyse' username=username strategy_name=strategy_name %}" method="post" style="width:20%;float:left;margin:5px 0 0 5%">
+                            <button style="width:15%;float:left;margin:12px 0 0 5%" onclick="overlay()">Create New Strategy</button>
+                            <form action="{% url 'babaApp:analyse' username=username strategy_name=strategy_name %}" method="post" style="width:15%;float:left;margin:5px 0 0 5%">
                                 {% csrf_token %}
                                 <button style="width:100%;height:100%;">Analyse Strategy</button>
                             </form>
-                            <form action="{% url 'babaApp:settings' %}{{strategy_name}}/" method='post' style="width:20%;float:left;margin:5px 0 0 5%">
+                            <form action="{% url 'babaApp:settings' %}{{strategy_name}}/" method='post' style="width:15%;float:left;margin:5px 0 0 5%">
                                 {% csrf_token %}
                                 <button style="width:100%;height:100%;">Trading Preferences</button>
+                            </form>
+                            <form action="{% url 'babaApp:random_variables' username=username %}" method='post' style="width:15%;float:left;margin:5px 0 0 5%">
+                                {% csrf_token %}
+                                <button style="width:100%;height:100%;">Random Variables</button>
                             </form>
 
                         </div>
@@ -130,7 +134,15 @@
 
                                     {% if assumptions %}
                                     {% for assumption in assumptions %}
-                                    <tr><td>{{ assumption }}</td></tr>
+                                    <tr>
+                                        <td>{{ assumption }}</td>
+                                        <td>
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=assumption type='a' %}">
+                                                {% csrf_token %}
+                                                <button class="delete_element" type="submit" value=""></button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                     {% endfor %}
                                     {% endif %}
 
@@ -149,7 +161,15 @@
                                     <table id="contraries_table" class="layout_table babaElementsTable">
                                     {% if contraries %}
                                     {% for contrary in contraries %}
-                                    <tr><td>{{ contrary }}</td></tr>
+                                    <tr>
+                                        <td>{{ contrary }}</td>
+                                        <td>
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=contrary type='c' %}">
+                                                {% csrf_token %}
+                                                <button class="delete_element" type="submit" value=""></button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                     {% endfor %}
                                     {% endif %}
                                 </table>
@@ -167,7 +187,15 @@
                                     <table id="rvs_table" class="layout_table babaElementsTable">
                                     {% if random_variables %}
                                     {% for rv in random_variables %}
-                                    <tr><td>{{ rv }}</td></tr>
+                                    <tr>
+                                        <td>{{ rv }}</td>
+                                        <td>
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=rv type='r' %}">
+                                                {% csrf_token %}
+                                                <button class="delete_element" type="submit" value=""></button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                     {% endfor %}{% endif %}
 
                                     </table>
@@ -192,7 +220,15 @@
 
                                     {% if rules %}
                                     {% for rule in rules %}
-                                    <tr><td>{{ rule }}</td></tr>
+                                    <tr>
+                                        <td>{{ rule }}</td>
+                                        <td>
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=rule type='u' %}">
+                                                {% csrf_token %}
+                                                <button class="delete_element" type="submit" value=""></button>
+                                            </form>
+                                        </td>
+                                    </tr>
                                     {% endfor %}
                                     {% endif %}
 
@@ -218,7 +254,15 @@
                                         <table id="macro_rules" class="layout_table macroElementsTable">
                                             {% if macro_rules %}
                                             {% for rule in macro_rules %}
-                                            <tr><td>{{ rule }}</td></tr>
+                                            <tr>
+                                                <td>{{ rule }}</td>
+                                                <td>
+                                                    <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=rule type='m' %}">
+                                                        {% csrf_token %}
+                                                        <button class="delete_element" type="submit" value=""></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
                                             {% endfor %}
                                             {% endif %}
                                         </table>

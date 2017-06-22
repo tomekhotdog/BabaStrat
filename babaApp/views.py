@@ -24,6 +24,7 @@ strategy_engine.start_strategy_task()
 # task
 # backtest.modify_strategies()
 # backtest.back_test_strategies()
+# backtest.vary_yields_and_loss_limits()
 #####################################
 
 
@@ -42,6 +43,13 @@ def frameworks_with_market(request, market_name):
     user = controller.get_user()
     strategy = controller.get_first_strategy_for_market(user, market_name)
     return frameworks(request, market_name, strategy.strategy_name)
+
+
+def frameworks_with_delete_element(request, market_name, strategy_name, delete_element, type):
+    user = controller.get_user()
+    controller.delete_strategy_element(user, strategy_name, delete_element, type)
+
+    return frameworks(request, market_name, strategy_name)
 
 
 def frameworks(request, market_name, strategy_name):
@@ -236,6 +244,22 @@ def analyse(request, username, strategy_name):
         'back_test_data_url': back_test_data_url,
     }
     return render(request, 'babaApp/analyse.html', context)
+
+
+def random_variables_default(request):
+    user = controller.get_user()
+    return random_variables(request, user.username)
+
+
+def random_variables(request, username):
+
+    markets = controller.get_market_list()
+
+    context = {'markets': markets,
+               'username': username,
+               'style': specificStyling.get_sidebar_styling('random_variables')}
+
+    return render(request, 'babaApp/randomVariables.html', context)
 
 
 ############################

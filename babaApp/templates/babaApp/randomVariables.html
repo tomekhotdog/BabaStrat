@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<!--
+	Prologue by HTML5 UP
+	html template: https://html5up.net/prologue
+-->
+{% load static %}
+<html>
+	<head>
+		<title>Random Variables</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/html5shiv.js' %}"></script><![endif]-->
+		<link rel="stylesheet" href="{% static 'babaApp/assets/css/main.css' %}" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie8.css' %}" /><![endif]-->
+		<!--[if lte IE 9]><link rel="stylesheet" href="{% static 'babaApp/assets/css/ie9.css' %}" /><![endif]-->
+	</head>
+	<body>
+
+        <!-- Header: (sidebar) -->
+            {% include "babaApp/sideBar.html" %}
+        <!-- end of sidebar -->
+
+		<!-- Main -->
+			<div id="main">
+
+				<!--&lt;!&ndash; Data chart &ndash;&gt;-->
+					<!--<section id="top" class="one dark cover">-->
+						<!--<div class="container">-->
+
+							<!--<header>-->
+								<!--<p>Executed trades and analysis</p>-->
+							<!--</header>-->
+
+						<!--</div>-->
+					<!--</section>-->
+
+                <!-- Strategy_confidence -->
+                    <section id="overview" class="two">
+                        <div class="container">
+							<p1>Random Variables</p1>
+                        </div>
+                    </section>
+
+				<!-- Positions -->
+					<section id="open_positions" class="three">
+						<div class="container">
+                            <div class="randomVariablesTableScroll divBorder">
+                                <table id="open_positions_table" class="layout_table randomVariablesTable">
+                                    <th>Random Variable</th>
+                                    <th>ID</th>
+                                    <th>Probability</th>
+                                    <th>Additional Information</th>
+
+                                    <tr><td>EU Referendum before 2020</td><td>EURef2020</td><td>0.347</td><td>YES</td></tr>
+                                    <tr><td>Theresa May as next Prime Minister</td><td>MayAsPM</td><td>0.926</td><td>YES</td></tr>
+                                    <tr><td>Next UK Interest Rate Decision</td><td>UKInterestRate</td><td>0.752</td><td>0.25 %</td></tr>
+                                    <tr><td>Australian Interest Rate July RBA</td><td>AusInterestRate</td><td>0.990</td><td>(No Change)</td></tr>
+
+
+                                    {% if random_variables %}
+                                    {% for rv in random_variables %}
+
+
+                                    <tr>
+                                        <td>{{ rv.name }}</td>
+                                        <td>{{ rv.id }}</td>
+                                        <td>{{ rv.probability }}</td>
+                                        <td>{{ rv.additional_information }}</td>
+                                    </tr>
+
+                                    {% endfor %}
+                                    {% endif %}
+                                </table>
+                            </div>
+
+						</div>
+					</section>
+
+                    <section id="top" class="three">
+                        <div class="container" style="height:400px">
+
+                        </div>
+                    </section>
+			</div>
+
+		<!-- Scripts -->
+			<script src="{% static 'babaApp/assets/js/jquery.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/jquery.scrollzer.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/skel.min.js' %}"></script>
+			<script src="{% static 'babaApp/assets/js/util.js' %}"></script>
+			<!--[if lte IE 8]><script src="{% static 'babaApp/assets/js/ie/respond.min.js' %}"></script><![endif]-->
+			<script src="{% static 'babaApp/assets/js/main.js' %}"></script>
+
+	</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>

@@ -185,7 +185,16 @@ def get_strategy_indicators(user, strategy_name):
 
 def get_strategy_macro_rules(user, strategy_name):
     strategy = Strategy.objects.filter(user=user, strategy_name=strategy_name)[0]
-    return strategy.framework_extension.split(NEW_LINE)
+    if not strategy.framework_extension: return None
+
+    macro_rules = strategy.framework_extension.split(NEW_LINE)
+    return_rules = []
+    for rule in macro_rules:
+        if rule and len(rule.strip()) > 0:
+            return_rules.append(rule)
+
+    if len(return_rules) == 0: return None
+    return return_rules
 
 
 def get_strategy_framework(strategy, datetime):
@@ -233,4 +242,63 @@ def add_framework_extension(user, strategy_name, macro_rule=None):
     except Strategy.DoesNotExist:
         print('Framework with name ' + strategy_name + ' does not exist')
     except RuntimeError:
-        print('Runtime when adding new MacroRule')
+        print('Runtime error when adding new MacroRule')
+
+
+def delete_strategy_element(user, strategy_name, element, type):
+    try:
+        strategy = Strategy.objects.get(user=user, strategy_name=strategy_name)
+        framework_string = strategy.framework
+        updated_framework_string = ''
+
+        if type == 'm':
+            extension_string = strategy.framework_extension
+            updated_extension_string = ''
+            for line in extension_string.split(NEW_LINE):
+                if element in line:
+                    continue
+
+                updated_extension_string += line
+                strategy.framework_extension = updated_extension_string
+                strategy.save()
+
+            pass
+
+        elif type == 'u':
+            rule_head = element.split(':-')[0].strip()
+            rule_body = [elem.strip() for elem in element.split(':-')[1].split(',')]
+
+            for line in framework_string.split(NEW_LINE):
+                if 'myRule(' in line:
+                    framework_rule_head = line.split('myRule(')[1].split(',')[0].strip()
+                    if framework_rule_head == rule_head and all(elem in line for elem in rule_body):
+                        continue
+
+                updated_framework_string += line + '\n'
+
+            strategy.framework = updated_framework_string
+            strategy.save()
+
+        else:
+            element_to_delete = element
+            element_identifier = None
+            if type == 'a':
+                element_identifier = 'myAsm('
+            elif type == 'c':
+                element_identifier = 'contrary('
+            elif type == 'r':
+                element_identifier = 'myRV('
+
+            for line in framework_string.split(NEW_LINE):
+                if element_identifier is not None and element_identifier in line:
+                    line_element = line.split(element_identifier)[1].split(')')[0]
+                    if line_element == element_to_delete:
+                        continue
+
+                updated_framework_string += line + '\n'
+
+            strategy.framework = updated_framework_string
+            strategy.save()
+
+    except IndexError:
+        pass

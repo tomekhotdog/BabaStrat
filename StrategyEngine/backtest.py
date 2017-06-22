@@ -271,7 +271,7 @@ def log_trade_execution(strategy, direction, open_close, price, quantity, date):
         execution = '(' + strategy.strategy_name + ') ' + direction + ' ' + '(' + open_close + ') ' + str(quantity) + ' @' + FLOAT_FORMAT.format(price) + ' (' + str(date) + ')'
         file.write(execution + '\n')
 
-strategies = ['audjpy_trends',
+all_strategies = ['audjpy_trends',
                   'audusd_trends',
                   'xauusd_trends',
                   'xagusd_trends',
@@ -291,18 +291,22 @@ strategies = ['audjpy_trends',
                   'audjpy_trends'
                   ]
 
-framework = "myRule(BUY , [ Uptrend, UptrendConfidence]). \n" \
+strategies = ['eurusd_trends', 'usdjpy_trends', 'gbpusd_trends', 'audusd_trends']
+
+framework = "myRule(BUY , [ MediumUptrend, LongUptrend, UptrendConfidence]). \n" \
             "myRV(UptrendConfidence, 0.98). \n" \
-            "myRule(SELL , [ Downtrend])."
+            "myRule(SELL , [ MediumDowntrend, LongDowntrend])."
 
-framework_extension = "Downtrend :- 50DayEMA < 100DayEMA and Close < 100DayEMA \n" \
-                      "Uptrend :- 50DayEMA > 100DayEMA and Close > 100DayEMA"
+framework_extension = "MediumDowntrend :- 20DayEMA < 50DayEMA and Close < 50DayEMA \n" \
+                      "MediumUptrend :- 20DayEMA > 50DayEMA and Close > 50DayEMA \n" \
+                      "LongDowntrend :- 50DayEMA < 100DayEMA and Close < 100DayEMA \n" \
+                      "LongUptrend :- 50DayEMA > 100DayEMA and Close > 100DayEMA \n"
 
-cpy = 4
-cpl = 4
+cpy = 3
+cpl = 3
 
 
-def modify_strategies():
+def modify_strategies(cpy, cpl):
     for s in strategies:
         strategy = Strategy.objects.get(strategy_name=s)
         strategy.framework = framework
@@ -332,3 +336,14 @@ def back_test_strategies():
             file.write('latest price for ' + strategy.market.symbol + ': ' + str(latest_price))
 
             file.write('\n\n')
+
+
+def vary_yields_and_loss_limits():
+    for i in range(9):
+        p = 1.4 + (i * 0.2)
+        with open('backtest_simulations.txt', 'a') as file:
+            file.write("####################################\n")
+            file.write("CPY, CPL = " + str(p) + '\n')
+            file.write("####################################\n")
+            modify_strategies(p, p)
+            back_test_strategies()

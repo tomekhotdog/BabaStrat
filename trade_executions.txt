@@ -9,3 +9,12 @@ Executed order: NZD_USD (OPEN) (quantity = 1000) @0.7103, SELL (strategy = nzdus
 Executed order: USD_CHF (OPEN) (quantity = 1000) @0.9711, SELL (strategy = usdchf_trends), 2017-06-06 13:21:43.020282
 Executed order: USD_JPY (OPEN) (quantity = 1000) @110.872, SELL (strategy = usdjpy_trends), 2017-06-06 13:21:43.075223
 Executed order: XAG_USD (OPEN) (quantity = 1000) @17.376, SELL (strategy = xagusd_trends), 2017-06-06 13:21:43.126486
+Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.874, BUY (strategy = maria_strategy), 2017-06-06 18:11:38.174406
+Executed order: GBP_CHF (OPEN) (quantity = 1000) @1.2472, SELL (strategy = gbpchf_trends), 2017-06-10 00:41:21.841927
+Executed order: USD_CAD (OPEN) (quantity = 1000) @1.3461, SELL (strategy = usdcad_trends), 2017-06-10 00:41:21.927435
+Executed order: GBP_JPY (OPEN) (quantity = 1000) @142.399, SELL (strategy = gbpjpy_trends), 2017-06-12 10:53:59.253190
+Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.874, BUY (strategy = pivot_points_analysis), 2017-06-15 19:35:37.167335
+Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.8738, SELL (strategy = CorbynWin), 2017-06-15 19:36:41.781027
+Executed order: EUR_CHF (OPEN) (quantity = 1000) @1.0896, SELL (strategy = eurchf_trends), 2017-06-22 20:05:42.149737
+Executed order: EUR_JPY (OPEN) (quantity = 1000) @124.409, SELL (strategy = eurjpy_trends), 2017-06-22 20:05:42.225991
+Executed order: XAU_USD (OPEN) (quantity = 1000) @1264.51, SELL (strategy = xauusd_trends), 2017-06-22 20:05:42.311365

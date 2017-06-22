@@ -13,30 +13,17 @@
 
 					<!-- Logo -->
 						<div id="logo">
-							<!--<span class="image avatar48"><img src="{% static 'babaApp/images/avatar.jpg' %}" alt="" /></span>-->
 							<h1 id="title">BabaStrat</h1>
 							<p>Creating alphas with BABAs</p>
 						</div>
 
 					<!-- Nav -->
 						<nav id="nav">
-							<!--
-
-								Prologue's nav expects links in one of two formats:
-
-								1. Hash link (scrolls to a different section within the page)
-
-								   <li><a href="#foobar" id="foobar-link" class="icon fa-whatever-icon-you-want skel-layers-ignoreHref"><span class="label">Foobar</span></a></li>
-
-								2. Standard link (sends the user to another page/site)
-
-								   <li><a href="http://foobar.tld" id="foobar-link" class="icon fa-whatever-icon-you-want"><span class="label">Foobar</span></a></li>
-
-							-->
 							<ul>
-								<li><a href="{% url 'babaApp:learn' %}" id="top-link" class="skel-layers-ignoreHref" style="{{ style.learn_li }}"><span class="icon fa-lightbulb-o" style="{{ style.learn_span }}">Learn</span></a></li>
-								<li><a href="{% url 'babaApp:settings' %}" id="portfolio-link" class="skel-layers-ignoreHref" style="{{ style.settings_li }}"><span class="icon fa-cogs" style="{{ style.settings_span }}">Settings</span></a></li>
-								<li><a href="{% url 'babaApp:reports' %}" id="about-link" class="skel-layers-ignoreHref" style="{{ style.reports_li }}"><span class="icon fa-bar-chart" style="{{ style.reports_span }}">Reports</span></a></li>
+								<li><a href="{% url 'babaApp:learn' %}" id="learn-link" class="skel-layers-ignoreHref" style="{{ style.learn_li }}"><span class="icon fa-lightbulb-o" style="{{ style.learn_span }}">Learn</span></a></li>
+								<li><a href="{% url 'babaApp:settings' %}" id="settings-link" class="skel-layers-ignoreHref" style="{{ style.settings_li }}"><span class="icon fa-cogs" style="{{ style.settings_span }}">Preferences</span></a></li>
+								<li><a href="{% url 'babaApp:reports' %}" id="reports-link" class="skel-layers-ignoreHref" style="{{ style.reports_li }}"><span class="icon fa-bar-chart" style="{{ style.reports_span }}">Reports</span></a></li>
+								<li><a href="{% url 'babaApp:random_variables' %}" id="random_variables-link" class="skel-layers-ignoreHref" style="{{ style.random_variables_li }}"><span class="icon fa-pie-chart" style="{{ style.random_variables_span }}">Variables</span></a></li>
 							</ul>
 						</nav>
 

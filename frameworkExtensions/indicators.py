@@ -499,11 +499,14 @@ def create_indicator_objects():
     i = IndicatorModel(indicator_name='CamarillaS2'); i.save()
     i = IndicatorModel(indicator_name='CamarillaS3'); i.save()
 
+
 # Arithmetic average of last n days
 def calculate_simple_moving_average(dataset, days, current_date):
     start_date = get_start_date(days, current_date=current_date)
     ticks = DataTick.objects.filter(dataset=dataset,
                                     tick_time__gte=start_date)
+    if len(ticks) == 0: return 0
+
     cumulative_sum = 0
     for tick in ticks:
         cumulative_sum += get_price(tick.ask_price, tick.bid_price)
@@ -519,6 +522,7 @@ def calculate_exponential_moving_average(dataset, days, current_date):
     start_date = get_start_date(days, current_date=current_date)
     ticks = DataTick.objects.filter(dataset=dataset,
                                     tick_time__gte=start_date)
+    if len(ticks) == 0: return 0
     number_ticks = len(ticks)
     last_day_ema = None
     multiplier = 2 / (number_ticks + 1)
@@ -541,6 +545,8 @@ def calculate_day_low(data_set, current_date):
     start_date = get_start_date(1, current_date=current_date)
     ticks = DataTick.objects.filter(dataset=data_set,
                                     tick_time__gte=start_date)
+    if len(ticks) == 0: return 0
+
     low = sys.maxsize
     for tick in ticks:
         price = get_price(tick.bid_price, tick.ask_price)
@@ -553,6 +559,8 @@ def calculate_day_high(data_set, current_date):
     start_date = get_start_date(1, current_date=current_date)
     ticks = DataTick.objects.filter(dataset=data_set,
                                     tick_time__gte=start_date)
+    if len(ticks) == 0: return 0
+
     high = 0
     for tick in ticks:
         price = get_price(tick.bid_price, tick.ask_price)

@@ -72,7 +72,11 @@ class MacroRule:
         self.macroRuleBody = MacroBooleanExpr(' '.join(elements[operator_index + 1:]).strip())  # MacroBooleanExpr
 
     def calculate(self, data_set, datetime):
-        return self.macroRuleBody.calculate(data_set, datetime)
+        try:
+            result = self.macroRuleBody.calculate(data_set, datetime)
+        except TypeError:
+            raise MacroRuleCalculationError('Macro Rule calculation error')
+        return result
 
 
 class MacroBooleanOperator:
@@ -224,5 +228,10 @@ class MacroBooleanExpr:
 
 
 class MacroElementParseException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
+class MacroRuleCalculationError(Exception):
     def __init__(self, message):
         self.message = message

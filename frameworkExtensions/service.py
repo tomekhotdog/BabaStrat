@@ -28,8 +28,13 @@ def compute_framework_rules(strategy, datetime):
 
             except macroElements.MacroElementParseException:
                 continue
+            except macroElements.MacroRuleCalculationError:
+                continue
 
     except DataSet.DoesNotExist:
+        pass
+
+    except AttributeError:
         pass
 
     return rules
