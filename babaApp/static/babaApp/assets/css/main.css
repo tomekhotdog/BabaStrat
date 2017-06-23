@@ -133,6 +133,30 @@
         background-color: rgba(0,0,0,0);
     }
 
+    button.chart_action {
+        padding: 5px 25px 10px 5px;
+        height: 25px;
+        width: 40px;
+        margin: 3px;
+        background-color: rgba(0,0,0,0.2);
+    }
+
+    button.enable_trading {
+        background: url('images/enable_trading_icon.png') no-repeat;
+    }
+
+    button.disable_trading {
+        background: url('images/disable_trading_icon.png') no-repeat;
+    }
+
+    button.close_positions {
+        background: url('images/close_positions_icon.png') no-repeat;
+    }
+
+    button.recalculate {
+        background: url('images/recalculate_icon.png') no-repeat;
+    }
+
     div.divBorder {
         border: 1px solid grey;
     }

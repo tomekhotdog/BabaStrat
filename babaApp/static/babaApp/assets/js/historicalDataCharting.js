@@ -1,5 +1,5 @@
 POLLING_TIME = 1000 * 60 * 30 // Every 30 mins
-PROBABILITY_POLLING_TIME = 1000 * 60 // Once a minute
+PROBABILITY_POLLING_TIME = 1000 * 2 // Once a minute
 INSTRUMENT_NAME = ''
 DURATION = '/2'
 MARKET_DATA_URL = "/babaApp/marketdata/"
@@ -8,10 +8,6 @@ INSTRUMENT_NAME = document.getElementById("framework_name").innerHTML
 first_graph_drawing = true
 INITIAL_ANIMATION_DURATION = 1000
 UPDATE_ANIMATION_DURATION = 0
-
-function footerButtonClick() {
-    document.getElementById("test_element").innerHTML = "Ohh you've clicked mee....";
-}
 
 // Polling server for data to populate chart
 function setupPolling() {
@@ -76,8 +72,6 @@ function setupPolling() {
 var lineChart = null
 
 function drawChart(data) {
-    document.getElementById("test_element").innerHTML = "test element: " + (Math.random() * 100).toString();
-
     if (lineChart != null) {
         lineChart.destroy()
     }
@@ -194,3 +188,48 @@ function drawBackTestChart(data) {
         }
     });
 }
+
+/******************* Trading actions ********************/
+
+function enableTrading() {
+    var username = document.getElementById("username").innerHTML;
+    var strategy_name = document.getElementById("strategy_name").innerHTML;
+    var url = ('strategy_action/').concat(strategy_name).concat('/').concat('enable_trading').concat('/');
+
+    performStrategyAction(url)
+}
+
+function disableTrading() {
+    var username = document.getElementById("username").innerHTML;
+    var strategy_name = document.getElementById("strategy_name").innerHTML;
+    var url = ('strategy_action/').concat(strategy_name).concat('/').concat('disable_trading').concat('/');
+
+    performStrategyAction(url)
+}
+
+function closePositions() {
+    var username = document.getElementById("username").innerHTML;
+    var strategy_name = document.getElementById("strategy_name").innerHTML;
+    var url = ('strategy_action/').concat(strategy_name).concat('/').concat('close_positions').concat('/');
+
+    performStrategyAction(url)
+}
+
+function recalculateProbabilities() {
+    var username = document.getElementById("username").innerHTML;
+    var strategy_name = document.getElementById("strategy_name").innerHTML;
+    var url = ('strategy_action/').concat(strategy_name).concat('/').concat('recalculate_probabilities').concat('/');
+
+    performStrategyAction(url)
+}
+
+function performStrategyAction(url) {
+    $.ajax({
+        url: url,
+        method: 'get',
+        success: function(data) {
+            fetchProbabilityValues()
+        }
+    });
+}
+

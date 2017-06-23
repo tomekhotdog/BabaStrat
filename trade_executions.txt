@@ -18,3 +18,5 @@ Executed order: EUR_GBP (OPEN) (quantity = 1000) @0.8738, SELL (strategy = Corby
 Executed order: EUR_CHF (OPEN) (quantity = 1000) @1.0896, SELL (strategy = eurchf_trends), 2017-06-22 20:05:42.149737
 Executed order: EUR_JPY (OPEN) (quantity = 1000) @124.409, SELL (strategy = eurjpy_trends), 2017-06-22 20:05:42.225991
 Executed order: XAU_USD (OPEN) (quantity = 1000) @1264.51, SELL (strategy = xauusd_trends), 2017-06-22 20:05:42.311365
+Executed order: EUR_CHF (CLOSE) (quantity = 1000) @1.09, SELL (strategy = eurchf_trends), 2017-06-23 11:41:05.374957
+Executed order: EUR_CHF (OPEN) (quantity = 1000) @1.0896, SELL (strategy = eurchf_trends), 2017-06-23 11:41:18.733738

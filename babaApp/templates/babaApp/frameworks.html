@@ -23,25 +23,40 @@
 			<div id="main">
 
 				<!-- Data chart -->
-					<section id="top" class="one dark cover">
-						<div class="container">
+					<!--<section id="top" class="one dark cover">-->
+						<!--<div class="container">-->
 
-							<header>
-								<h2 class="alt"><strong>{{ market_name }}</strong><br/></h2>
-                                <p id="framework_name" hidden>{{ market_name }}</p>
-                                <p>({{ strategy_name }} strategy)</p>
-								<p id="subheading">Visualise market data and track your positions</p>
-							</header>
+							<!--<header>-->
+								<!--<h2 class="alt"><strong>{{ market_name }}</strong><br/></h2>-->
+                                <!--<p id="framework_name" hidden>{{ market_name }}</p>-->
+                                <!--<p>({{ strategy_name }} strategy)</p>-->
+								<!--<p id="subheading">Visualise market data and track your positions</p>-->
+							<!--</header>-->
 
-						</div>
-					</section>
+						<!--</div>-->
+					<!--</section>-->
+
+                    <section class="three">
+                        <div style="width:100%; height:25px; position:relative">
+                            <div align="left" style="float:left">
+                                <p2 id="framework_name" style="margin-left:50px">{{ market_name }}</p2>
+                                <p2 id="strategy_name" style="margin-left:50px">({{ strategy_name }})</p2>
+
+                                <p id="strategy_name" hidden>{{ strategy_name }}</p>
+                                <p id="username" hidden>{{ username }}</p>
+                            </div>
+                            <div align="right" style="float:right; margin-right:50px">
+                                <button class="chart_action enable_trading" title="enable trading" onclick="enableTrading()"></button>
+                                <button class="chart_action disable_trading" title="disable trading" onclick="disableTrading()"></button>
+                                <button class="chart_action close_positions" title="close positions" onclick="closePositions()"></button>
+                                <button class="chart_action recalculate" title="recalculate probabilities" onclick="recalculateProbabilities()"></button>
+                            </div>
+                        </div>
+
+                    </section>
 
                 <!-- Historical data chart -->
                     <section id="chart_section">
-                        <!--<form role="form" action="" method="post" style="padding:0;margin:0">-->
-                            <!--{% csrf_token %}-->
-                            <!--{{ strategy_selection_form.strategy_selection }}-->
-                        <!--</form>-->
                         <div id="chart_div">
                             <canvas id="myChart" width="800" height="300"></canvas>
                         </div>
@@ -54,7 +69,7 @@
                         </div>
                         <div id="strategy_options">
                             <!--<form role="form" action="{% url 'babaApp:settings' %}{{ selected_framework }}/" method="post">-->
-                            <form role="form" action="{% url 'babaApp:frameworks_with_market' market_name=market_name %}" method="post" style="width:15%;height:100%;float:left;">
+                            <form role="form" action="{% url 'babaApp:frameworks_with_market' market_name=market_name username=username %}" method="post" style="width:15%;height:100%;float:left;">
                                 {% csrf_token %}
                                 {{ strategy_selection_form.strategy_selection }}
                             </form>
@@ -137,7 +152,7 @@
                                     <tr>
                                         <td>{{ assumption }}</td>
                                         <td>
-                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=assumption type='a' %}">
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name username=username strategy_name=strategy_name delete_element=assumption type='a' %}">
                                                 {% csrf_token %}
                                                 <button class="delete_element" type="submit" value=""></button>
                                             </form>
@@ -149,7 +164,7 @@
                                 </table>
                                 </div>
                                 <div class="input_box">
-                                    <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name %}" method="post">
+                                    <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name username=username %}" method="post">
                                         {% csrf_token %}
                                         {{ assumption_form.assumption }}
                                     </form>
@@ -164,7 +179,7 @@
                                     <tr>
                                         <td>{{ contrary }}</td>
                                         <td>
-                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=contrary type='c' %}">
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name username=username strategy_name=strategy_name delete_element=contrary type='c' %}">
                                                 {% csrf_token %}
                                                 <button class="delete_element" type="submit" value=""></button>
                                             </form>
@@ -175,7 +190,7 @@
                                 </table>
                                 </div>
                                 <div class="input_box">
-                                    <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name %}" method="post">
+                                    <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name username=username %}" method="post">
                                         {% csrf_token %}
                                         {{ contrary_form.contrary }}
                                     </form>
@@ -190,7 +205,7 @@
                                     <tr>
                                         <td>{{ rv }}</td>
                                         <td>
-                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=rv type='r' %}">
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name username=username strategy_name=strategy_name delete_element=rv type='r' %}">
                                                 {% csrf_token %}
                                                 <button class="delete_element" type="submit" value=""></button>
                                             </form>
@@ -201,7 +216,7 @@
                                     </table>
                                 </div>
                                 <div class="input_box">
-                                    <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name %}" method="post">
+                                    <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name username=username %}" method="post">
                                         {% csrf_token %}
                                         {{ random_variable_form.random_variable }}
                                     </form>
@@ -223,7 +238,7 @@
                                     <tr>
                                         <td>{{ rule }}</td>
                                         <td>
-                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=rule type='u' %}">
+                                            <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name username=username strategy_name=strategy_name delete_element=rule type='u' %}">
                                                 {% csrf_token %}
                                                 <button class="delete_element" type="submit" value=""></button>
                                             </form>
@@ -235,7 +250,7 @@
                                 </table>
                             </div>
                             <div class="input_box">
-                                <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name %}" method="post">
+                                <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name username=username %}" method="post">
                                     {% csrf_token %}
                                     {{ rule_form }}
                                 </form>
@@ -257,7 +272,7 @@
                                             <tr>
                                                 <td>{{ rule }}</td>
                                                 <td>
-                                                    <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name strategy_name=strategy_name delete_element=rule type='m' %}">
+                                                    <form role="form" method="post" action="{% url 'babaApp:frameworks_delete_element' market_name=market_name username=username strategy_name=strategy_name delete_element=rule type='m' %}">
                                                         {% csrf_token %}
                                                         <button class="delete_element" type="submit" value=""></button>
                                                     </form>
@@ -282,7 +297,7 @@
                                 </div>
                             </div>
                             <div class="input_box" style="margin-top:10px">
-                                <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name %}" method="post">
+                                <form role="form" action="{% url 'babaApp:frameworks' market_name=market_name strategy_name=strategy_name username=username %}" method="post">
                                     {% csrf_token %}
                                     {{ macro_rule_form }}
                                 </form>
@@ -411,7 +426,6 @@
                     <li>Equity <b>GBP {{total_equity}} ({{total_equity_percentage_change}}%)</b></li>
                     {% endif %}
                     <li>GBP/USD position value <b>GBP -897.23</b></li>
-                    <p id="test_element">Test element</p>
                 </ul>
 
 				<!--&lt;!&ndash; Copyright &ndash;&gt;-->

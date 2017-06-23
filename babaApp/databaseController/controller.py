@@ -1,6 +1,7 @@
 from babaApp.models import User, Market, TradingSettings, Portfolio, Trade, Strategy, Indicator
 from django.shortcuts import get_list_or_404
 from marketData import services as market_data_services
+from StrategyEngine import services as strategy_engine_services
 from babaSemantics import BABAProgramParser as Parser
 from babaSemantics import Semantics as Semantics
 from babaApp.extras import applicationStrings as strings
@@ -261,7 +262,6 @@ def delete_strategy_element(user, strategy_name, element, type):
                 updated_extension_string += line
                 strategy.framework_extension = updated_extension_string
                 strategy.save()
-
             pass
 
         elif type == 'u':
@@ -302,3 +302,26 @@ def delete_strategy_element(user, strategy_name, element, type):
 
     except IndexError:
         pass
+
+
+def enable_trading(username_string, strategy_name_string):
+    strategy = Strategy.objects.filter(user__username=username_string, strategy_name=strategy_name_string)[0]
+    trading_settings = TradingSettings.objects.get(strategy=strategy)
+    trading_settings.enable_trading = True
+    trading_settings.save()
+
+
+def disable_trading(username_string, strategy_name_string):
+    strategy = Strategy.objects.filter(user__username=username_string, strategy_name=strategy_name_string)[0]
+    trading_settings = TradingSettings.objects.get(strategy=strategy)
+    trading_settings.enable_trading = False
+    trading_settings.save()
+
+
+def close_positions(username_string, strategy_name_string):
+    strategy_engine_services.close_positions_for_strategy(username_string, strategy_name_string)
+
+
+def recalculate_probabilities():
+    strategy_engine_services.stop_strategy_task()
+    strategy_engine_services.start_strategy_task()

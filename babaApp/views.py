@@ -2,7 +2,7 @@ from django.shortcuts import render, get_list_or_404
 from django.http import JsonResponse
 
 from babaSemantics import Semantics as Semantics
-from babaApp.extras import specificStyling
+from babaApp.extras import specificStyling, applicationStrings
 from .models import Market, Strategy
 from .forms import AssumptionForm, ContraryForm, RandomVariableForm, RuleForm, MacroRuleForm, SettingsForm, StrategyPreferencesSelectionForm, trading_choices, trading_options, NewStrategyForm, StrategySelectionForm, TimeIntervalSelectionForm, BackTestTimeIntervalSelectionForm
 from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
@@ -36,23 +36,25 @@ def index(request):
 def frameworks_default(request):
     market_list = get_list_or_404(Market)
     market = market_list[0]
-    return frameworks_with_market(request, market.market_name)
+    user = controller.get_user()
+
+    return frameworks_with_market(request, market.market_name, user.username)
 
 
-def frameworks_with_market(request, market_name):
+def frameworks_with_market(request, market_name, username):
     user = controller.get_user()
     strategy = controller.get_first_strategy_for_market(user, market_name)
-    return frameworks(request, market_name, strategy.strategy_name)
+    return frameworks(request, market_name, username, strategy.strategy_name)
 
 
-def frameworks_with_delete_element(request, market_name, strategy_name, delete_element, type):
+def frameworks_with_delete_element(request, market_name, username, strategy_name, delete_element, type):
     user = controller.get_user()
     controller.delete_strategy_element(user, strategy_name, delete_element, type)
 
-    return frameworks(request, market_name, strategy_name)
+    return frameworks(request, market_name, username, strategy_name)
 
 
-def frameworks(request, market_name, strategy_name):
+def frameworks(request, market_name, username, strategy_name):
     if request.method == POST:
         process_form_submission(request, strategy_name)
         strategy_name = process_new_strategy_form(request, market_name, strategy_name)
@@ -365,6 +367,22 @@ def semantic_probability(request, username, strategy_name, sentence, semantics):
 
     data = strategy_engine_queries.get_semantic_probability(username, strategy_name, sentence, semantics_selection)
     return JsonResponse(data)
+
+
+def strategy_action(request, market_name, username, strategy_name, strategy_action_id):
+    if strategy_action_id == applicationStrings.ENABLE_TRADING:
+        controller.enable_trading(username, strategy_name)
+
+    elif strategy_action_id == applicationStrings.DISABLE_TRADING:
+        controller.disable_trading(username, strategy_name)
+
+    elif strategy_action_id == applicationStrings.CLOSE_POSITIONS:
+        controller.close_positions(username, strategy_name)
+
+    elif strategy_action_id == applicationStrings.RECALCULATE_PROBABILITIES:
+        controller.recalculate_probabilities()
+
+    return empty(request)
 
 
 def empty(request):

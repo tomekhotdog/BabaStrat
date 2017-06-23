@@ -34,7 +34,7 @@ def start_strategy_task():
 
 def stop_strategy_task():
     if __m.task_is_running:
-        __m.strategy_task.stop()
+        __m.strategy_task.cancel()
         __m.task_is_running = False
 
 
@@ -257,3 +257,11 @@ def get_probability(username, strategy_name, direction, semantics):
 
 def get_user_strategy_key_root(strategy):
     return strategy.user.username + '_' + strategy.strategy_name + '_'
+
+
+def close_positions_for_strategy(username_string, strategy_name_string):
+    open_positions = Trade.objects.filter(portfolio__user__username=username_string,
+                                          strategy__strategy_name=strategy_name_string)
+
+    for position in open_positions:
+        execute_close_position(position)

@@ -35,7 +35,7 @@
 
                                         {% if markets %}
                                         {% for market in markets %}
-                                        <li><a href="{% url 'babaApp:frameworks_with_market' market.market_name %}">{{ market.market_name }}</a></li>
+                                        <li><a href="{% url 'babaApp:frameworks_with_market' market_name=market.market_name username=username %}">{{ market.market_name }}</a></li>
                                         {% endfor %}
                                         {% endif %}
 
