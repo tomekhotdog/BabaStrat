@@ -23,17 +23,6 @@
 		<!-- Main -->
 			<div id="main">
 
-				<!--&lt;!&ndash; Data chart &ndash;&gt;-->
-					<!--<section id="top" class="one dark cover">-->
-						<!--<div class="container">-->
-
-							<!--<header>-->
-								<!--<p>Executed trades and analysis</p>-->
-							<!--</header>-->
-
-						<!--</div>-->
-					<!--</section>-->
-
                 <!-- Strategy_confidence -->
                     <section id="overview" class="two">
                         <div class="container">
@@ -46,26 +35,15 @@
 						<div class="container">
                             <div class="randomVariablesTableScroll divBorder">
                                 <table id="open_positions_table" class="layout_table randomVariablesTable">
-                                    <th>Random Variable</th>
-                                    <th>ID</th>
-                                    <th>Probability</th>
-                                    <th>Additional Information</th>
+                                    <th><b>Random Variable</b></th>
+                                    <th><b>Probability</b></th>
 
-                                    <tr><td>EU Referendum before 2020</td><td>EURef2020</td><td>0.347</td><td>YES</td></tr>
-                                    <tr><td>Theresa May as next Prime Minister</td><td>MayAsPM</td><td>0.926</td><td>YES</td></tr>
-                                    <tr><td>Next UK Interest Rate Decision</td><td>UKInterestRate</td><td>0.752</td><td>0.25 %</td></tr>
-                                    <tr><td>Australian Interest Rate July RBA</td><td>AusInterestRate</td><td>0.990</td><td>(No Change)</td></tr>
-
-
-                                    {% if random_variables %}
-                                    {% for rv in random_variables %}
-
+                                    {% if exchange_events %}
+                                    {% for event in exchange_events %}
 
                                     <tr>
-                                        <td>{{ rv.name }}</td>
-                                        <td>{{ rv.id }}</td>
-                                        <td>{{ rv.probability }}</td>
-                                        <td>{{ rv.additional_information }}</td>
+                                        <td>{{ event.event_name }}</td>
+                                        <td>{{ event.probability }}</td>
                                     </tr>
 
                                     {% endfor %}
@@ -77,7 +55,7 @@
 					</section>
 
                     <section id="top" class="three">
-                        <div class="container" style="height:400px">
+                        <div class="container" style="height:500px">
 
                         </div>
                     </section>

@@ -167,6 +167,14 @@ function drawPerformanceChart(data) {
                     bottom: 0
                 }
             },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Gross Profit'
+                    }
+                }]
+            }
         }
     });
 }
@@ -185,9 +193,31 @@ function drawBackTestChart(data) {
                     bottom: 0
                 }
             },
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Gross Profit'
+                    }
+                }]
+            }
         }
     });
 }
+
+
+function strategy_trade_detail(framework){
+    var semantic_probabilities_div = document.getElementById("semantic_probabilities_div")
+    semantic_probabilities_div.innerHTML = framework
+
+    document.getElementById('strategy_trade_detail_overlay').style.visibility = 'visible'
+}
+
+function remove_strategy_trade_detail_overlay() {
+    document.getElementById('strategy_trade_detail_overlay').style.visibility = 'hidden'
+}
+
+
 
 /******************* Trading actions ********************/
 

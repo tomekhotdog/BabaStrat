@@ -100,6 +100,8 @@ class Trade(models.Model):
     open_position = models.BooleanField()
     position_opened = models.DateTimeField(null=True, blank=True)
     position_closed = models.DateTimeField(null=True, blank=True)
+    framework_at_open = models.TextField(default='.')
+    framework_at_close = models.TextField(default='.')
 
     def __str__(self):
         return self.instrument_symbol + ": " + str(self.quantity) + " @ " + str(self.price)
@@ -116,3 +118,8 @@ class SimulatedTrade(models.Model):
     open_position = models.BooleanField()
     position_opened = models.DateTimeField(null=True, blank=True)
     position_closed = models.DateTimeField(null=True, blank=True)
+
+
+class ExchangeEvent(models.Model):
+    event_name = models.CharField(max_length=100)
+    probability = models.FloatField(default=0)

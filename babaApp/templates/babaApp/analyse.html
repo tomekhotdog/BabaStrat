@@ -23,25 +23,27 @@
 		<!-- Main -->
 			<div id="main">
 
-				<!-- Data chart -->
-                <section id="top" class="one dark cover">
-                    <div class="container">
-                        <header>
-                            <h2 class="alt">Analyse strategy</h2>
-                            <p>View performance, back test and compare strategies</p>
-                            <p>{{strategy_name}} ({{market_name}})</p>
-                            <p id="username" hidden>{{ username }}</p>
-                            <p id="strategy_name" hidden>{{ strategy_name }}</p>
-                            <p id="strategy_performance_data_url" hidden>{{ strategy_performance_data_url }}</p>
-                            <p id="back_test_data_url" hidden>{{ back_test_data_url }}</p>
-                    </div>
-                </section>
+                <section class="three">
+                        <div style="width:100%; height:25px; position:relative">
+                            <div align="left" style="float:left">
+                                <p2 style="margin-left:50px">Analyse strategy</p2>
+
+                                <p id="strategy_name" hidden>{{ strategy_name }}</p>
+                                <p id="username" hidden>{{ username }}</p>
+                                <p id="strategy_performance_data_url" hidden>{{ strategy_performance_data_url }}</p>
+                                <p id="back_test_data_url" hidden>{{ back_test_data_url }}</p>
+                            </div>
+                            <div align="right" style="float:right; margin-right:50px">
+                                <p2 id="strategy_name" style="margin-right:50px">({{ strategy_name }})</p2>
+                            </div>
+                        </div>
+                    </section>
 
                 <!-- Strategy performance section -->
                 <section id="strategy_performance" style="margin-top:0px">
                     <p>Strategy performance</p>
                     <div id="analyse_chart_div">
-                        <canvas id="performanceChart" width="700" height="350"></canvas>
+                        <canvas id="performanceChart" width="700" height="450"></canvas>
                     </div>
                     <div id="analyse_chart_options_div">
                         <form action="" method="post">
@@ -50,6 +52,27 @@
                             <input type="submit" value="Recalculate" style="width:100%;height:40px;padding:0px;margin-top:20px">
                         </form>
                     </div>
+                    {% if strategy_trades %}
+                    <div id="analyse_trade_details" class="divBorder">
+                        <table class="layout_table">
+                            <th><b>Type</b></th>
+                            <th><b>Quantity</b></th>
+                            <th><b>Direction</b></th>
+                            <th><b>Price</b></th>
+                            <th><b>Date</b></th>
+
+                            {% for t in strategy_trades %}
+                            <tr onclick="strategy_trade_detail('{{ t.framework }}')">
+                                <td>{{t.trade_type}}</td>
+                                <td>{{t.quantity}}</td>
+                                <td>{{t.direction}}</td>
+                                <td>{{t.price}}</td>
+                                <td>{{t.date}}</td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endif %}
                 </section>
 
                  <!-- Back test strategy section -->
@@ -67,20 +90,6 @@
                     </div>
                 </section>
 
-                <!--&lt;!&ndash; Strategy_confidence &ndash;&gt;-->
-                    <!--<section id="strategy_confidence" class="two">-->
-                        <!--<div class="container">-->
-                            <!--Introduction-->
-                        <!--</div>-->
-                    <!--</section>-->
-
-				<!--&lt;!&ndash; Positions &ndash;&gt;-->
-					<!--<section id="positions" class="three">-->
-						<!--<div class="container divBorder">-->
-                            <!--Example usage-->
-						<!--</div>-->
-					<!--</section>-->
-
 			</div>
 
 		<!-- Footer -->
@@ -90,12 +99,6 @@
                     <li>Equity <b>GBP 10000</b></li>
                     <li>GBP/USD position value <b>GBP -897.23</b></li>
                 </ul>
-
-				<!--&lt;!&ndash; Copyright &ndash;&gt;-->
-					<!--<ul class="copyright">-->
-						<!--<li>&copy; Untitled. All rights reserved.</li>-->
-                        <!--<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>-->
-					<!--</ul>-->
 
 			</div>
 
@@ -127,4 +130,11 @@
         <script src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
 
 	</body>
+
+
+    <div id="strategy_trade_detail_overlay" style='visibility:hidden'>
+        Semantic Probabilities
+        <div id="semantic_probabilities_div"></div>
+        <button class="overlay_cancel_button" onclick="remove_strategy_trade_detail_overlay()">Cancel</button>
+    </div>
 </html>

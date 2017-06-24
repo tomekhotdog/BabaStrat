@@ -229,6 +229,15 @@
         margin-top:2%;
     }
 
+    #analyse_trade_details {
+        height:100px;
+        width: 65%;
+        overflow: auto;
+        float: left;
+        margin-left: 7%;
+        margin-top: 2%;
+    }
+
     #analyse_test_chart_div {
         float: left;
         width: 75%;
@@ -266,6 +275,35 @@
         font-size: 30px;
         padding: 10px;
         margin:30px 0 0 0;
+    }
+
+    #strategy_trade_detail_overlay {
+        position: absolute;
+        top: 20%;
+        left: 30%;
+        width: 40%;
+        height: 325px;
+        background-color: rgba(0,0,0,.85);
+        z-index: 100;
+        vertical-align: middle;
+        text-align: center;
+        color: #fff;
+        font-size: 30px;
+        padding: 10px;
+        margin:30px 0 0 0;
+    }
+
+    #semantic_probabilities_div {
+        height: 200px;
+        overflow: auto;
+        margin: 10px;
+        font-size: 16px;
+    }
+
+    button.overlay_cancel_button {
+        width: 60%;
+        height: 40px;
+        margin: 10px 0px 0px 0px;
     }
 
 /* Dividers */

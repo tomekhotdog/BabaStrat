@@ -1,5 +1,5 @@
 from frameworkExtensions import macroElements
-from babaApp.models import DataSet
+from babaApp.models import DataSet, ExchangeEvent
 
 NEW_LINE = '\n'
 
@@ -38,3 +38,28 @@ def compute_framework_rules(strategy, datetime):
         pass
 
     return rules
+
+
+def extract_external_random_variables(framework):
+    additional_framework_elements = ''
+    for line in framework.splitlines():
+        try:
+            if 'myRule(' in line:
+                elements = line.split('myRule(')
+                rule_body_elements = elements[1]
+                rule_body_elements = rule_body_elements.split(')')[0]
+                rule_body_elements = rule_body_elements.split(',')[1]
+                rule_body_elements = rule_body_elements.split('[')[1]
+                rule_body_elements = rule_body_elements.split(']')[0]
+                rule_body_elements = rule_body_elements.split(',')
+
+                for element in rule_body_elements:
+                    events = ExchangeEvent.objects.filter(event_name=element.strip())
+                    if len(events) > 0:
+                        event = events[0]
+                        additional_framework_elements += '\nmyRV(' + event.event_name + ',' + str(event.probability / 100) + ').'
+
+        except IndexError:
+            pass
+
+    return additional_framework_elements

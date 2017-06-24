@@ -98,7 +98,8 @@ def get_json(label, labels, chart_data, additional_data=None, additional_label=N
 
         datasets.append(additional_dataset)
 
-    return {'labels': labels, 'datasets': datasets}
+    return {'labels': labels,
+            'datasets': datasets}
 
 
 # Returns a list of labels and data points to representing strategy performance
@@ -118,12 +119,15 @@ def calculate_strategy_performance(username, strategy_name, start_date, end_date
     plot_interval = 1  # Plot value one per day
 
     current_date = start_date
+    start_date_profit = calculate_strategy_profit(strategy, current_date)
+
     while current_date <= end_date:
         try:
             strategy_profit = calculate_strategy_profit(strategy, current_date)
+            profit_from_start_date = strategy_profit - start_date_profit
 
             labels.append(current_date.date())
-            data_points.append(str(strategy_profit))
+            data_points.append(FLOAT_FORMAT.format(profit_from_start_date))
 
         except market_data_queries.MarketDataUnavailable:
             pass

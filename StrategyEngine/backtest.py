@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from babaSemantics.Semantics import GROUNDED, SCEPTICALLY_PREFERRED, IDEAL
 from babaSemantics.Semantics import compute_semantic_probability
 import babaSemantics.BABAProgramParser as Parser
-from babaApp.models import User, TradingSettings, Trade, SimulatedTrade, Portfolio, Strategy
+from babaApp.models import User, TradingSettings, SimulatedTrade, Strategy
 from marketData import queries as market_data_queries
 from babaApp.extras import applicationStrings, converters
 from babaApp.databaseController import controller
@@ -58,9 +58,10 @@ def calculate_performance(strategy, start_date, end_date):
     while current_date <= end_date:
         try:
             strategy_profit = calculate_strategy_profit(strategy, current_date)
+            strategy_profit_string = FLOAT_FORMAT.format(strategy_profit)
 
             labels.append(current_date.date())
-            data_points.append(str(strategy_profit))
+            data_points.append(strategy_profit_string)
         except market_data_queries.MarketDataUnavailable:
             pass
 
@@ -227,7 +228,8 @@ def execute_open_position(user, strategy, direction, trading_settings, date):
         direction=converters.trade_type_string_to_integer(direction),
         price=current_price,
         open_position=True,
-        position_opened=date
+        position_opened=date,
+        framework_at_open=strategy.framework
     )
     simulated_trade.save()
     log_trade_execution(strategy, direction, 'OPEN', current_price, quantity, date)
@@ -239,6 +241,7 @@ def execute_close_position(open_position, date):
     open_position.close_price = current_price
     open_position.position_closed = date
     open_position.open_position = False
+    open_position.framework_at_close = open_position.strategy.framework
     open_position.save()
 
     log_trade_execution(open_position.strategy, converters.trade_type_integer_to_string(open_position.direction),

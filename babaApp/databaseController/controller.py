@@ -1,10 +1,9 @@
-from babaApp.models import User, Market, TradingSettings, Portfolio, Trade, Strategy, Indicator
+from babaApp.models import User, Market, TradingSettings, Portfolio, Trade, Strategy, Indicator, ExchangeEvent
 from django.shortcuts import get_list_or_404
 from marketData import services as market_data_services
 from StrategyEngine import services as strategy_engine_services
-from babaSemantics import BABAProgramParser as Parser
-from babaSemantics import Semantics as Semantics
-from babaApp.extras import applicationStrings as strings
+from babaSemantics import BABAProgramParser as Parser, Semantics, formattingUtilities
+from babaApp.extras import applicationStrings as strings, converters
 from frameworkExtensions import service as framework_extensions_service
 
 DELTA = 0.000001
@@ -105,6 +104,7 @@ def get_open_positions(user, market=None):
     for trade in open_trades:
         current_price = market_data_services.get_latest_price(trade.instrument_symbol, trade.direction)
         open_position = {'symbol': trade.instrument_symbol,
+                         'strategy': trade.strategy.strategy_name,
                          'direction': get_direction_string(trade.direction),
                          'quantity': trade.quantity,
                          'price': trade.price,
@@ -200,8 +200,38 @@ def get_strategy_macro_rules(user, strategy_name):
 
 def get_strategy_framework(strategy, datetime):
     main_framework = strategy.framework
+    additional_random_variables = framework_extensions_service.extract_external_random_variables(main_framework)
     additional_rules = framework_extensions_service.compute_framework_rules(strategy, datetime)
-    return main_framework + ' \n ' + additional_rules
+    return main_framework + ' \n ' + additional_random_variables + '\n' + additional_rules
+
+
+def get_strategy_trades_for_interval(user, strategy_name, start_date, end_date):
+    strategy = Strategy.objects.filter(user=user, strategy_name=strategy_name)[0]
+    trades = Trade.objects.filter(strategy=strategy, position_opened__gte=start_date, position_opened__lte=end_date)
+    trades_list = []
+    for trade in trades:
+        trade_detail = {
+            'trade_type': 'OPEN',
+            'quantity': trade.quantity,
+            'direction': converters.trade_type_integer_to_string(trade.direction),
+            'price': trade.price,
+            'date': trade.position_opened,
+            'framework': formattingUtilities.get_semantic_probabilities_html(trade.framework_at_open)
+        }
+        trades_list.append(trade_detail)
+
+        if not trade.open_position:
+            close_trade_detail = {
+                'trade_type': 'CLOSE',
+                'quantity': trade.quantity,
+                'direction': converters.trade_type_integer_to_string(trade.direction),
+                'price': trade.close_price,
+                'date': trade.position_closed,
+                'framework': formattingUtilities.get_semantic_probabilities_html(trade.framework_at_close)
+            }
+            trades_list.append(close_trade_detail)
+
+    return trades_list
 
 
 # Append to framework string representation with the relevant element
@@ -325,3 +355,7 @@ def close_positions(username_string, strategy_name_string):
 def recalculate_probabilities():
     strategy_engine_services.stop_strategy_task()
     strategy_engine_services.start_strategy_task()
+
+
+def get_exchange_events():
+    return ExchangeEvent.objects.all()

@@ -191,7 +191,8 @@ def execute_open_position(user, strategy, direction, trading_settings):
             direction=converters.trade_type_string_to_integer(direction),
             price=price_per_unit,
             open_position=True,
-            position_opened=datetime.datetime.now()
+            position_opened=datetime.datetime.now(),
+            framework_at_open=strategy.framework
         )
         trade.save()
 
@@ -202,12 +203,6 @@ def execute_open_position(user, strategy, direction, trading_settings):
                                       price_per_unit,
                                       'OPEN',
                                       trade.position_opened)
-
-        # TODO: portfolio update - delegate to another class (in databaseController)
-        # trade_unit_price = latest_price.ask_price if direction == 'BUY' else latest_price.bid_price
-        # trade_value = quantity * trade_unit_price
-        # portfolio.current_value = portfolio.current_value - trade_value
-        # portfolio.save()
 
     except Portfolio.DoesNotExist:
         print('Cannot find user portfolio when creating Trade object')
@@ -223,6 +218,7 @@ def execute_close_position(open_position):
         if converters.trade_type_integer_to_string(open_position.direction) == 'BUY' else latest_datatick.ask_price
     open_position.position_closed = datetime.datetime.now()
     open_position.open_position = False
+    open_position.framework_at_close = open_position.strategy.framework
     open_position.save()
 
     tradeExecutions.execute_trade(open_position.strategy.strategy_name,
@@ -232,13 +228,6 @@ def execute_close_position(open_position):
                                   open_position.close_price,
                                   'CLOSE',
                                   open_position.position_closed)
-
-
-    # TODO: portfolio should keep unused equity - total equity is derived concept
-    # trade_value = open_position.close_price * open_position.quantity
-    # portfolio = Portfolio.objects.get(user=controller.get_user())
-    # portfolio.current_value = portfolio.current_value + trade_value
-    # portfolio.save()
 
 
 # Returns the probability for the corresponding framework, direction (string) and semantics
@@ -252,7 +241,7 @@ def get_probability(username, strategy_name, direction, semantics):
     elif semantics == IDEAL and key in __m.ideal_probabilities.keys():
         return __m.ideal_probabilities[key]
     else:
-        return 0  # Raise exception?
+        return 0
 
 
 def get_user_strategy_key_root(strategy):

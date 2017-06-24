@@ -9,6 +9,7 @@ from marketData.queries import get_json, DAY, WEEK, MONTH, YEAR, THREE_YEARS
 from babaApp.databaseController import controller as controller
 import marketData.services as market_data_service
 import StrategyEngine.services as strategy_engine
+import StrategyEngine.random_variable_discovery as random_variable_discovery
 import StrategyEngine.queries as strategy_engine_queries
 from StrategyEngine import analysis, backtest
 
@@ -20,6 +21,7 @@ CHOSEN_SEMANTICS = 'I'
 
 #     Start strategy engine loop    #
 strategy_engine.start_strategy_task()
+random_variable_discovery.start_strategy_task()
 #####################################
 # task
 # backtest.modify_strategies()
@@ -117,9 +119,11 @@ def frameworks(request, market_name, username, strategy_name):
 
 
 def learn(request):
+    user = controller.get_user()
     market_list = get_list_or_404(Market)
     context = {'markets': market_list,
-               'style': specificStyling.get_sidebar_styling('learn')}
+               'style': specificStyling.get_sidebar_styling('learn'),
+               'username': user.username}
 
     return render(request, 'babaApp/learn.html', context)
 
@@ -163,12 +167,14 @@ def settings(request, selected_strategy_name):
 
     context = {'markets': markets, 'strategy_selection_form': strategy_selection_form,
                'settings_form': settings_form, 'selected_strategy': selected_strategy_name,
-               "style": specificStyling.get_sidebar_styling('settings')}
+               "style": specificStyling.get_sidebar_styling('settings'),
+               'username': user.username}
 
     return render(request, 'babaApp/settings.html', context)
 
 
 def reports(request):
+    user = controller.get_user()
     market_list = get_list_or_404(Market)
 
     total_equity, percentage_change = controller.get_total_equity(controller.get_user())
@@ -181,7 +187,8 @@ def reports(request):
                'open_positions': open_positions, 'executed_trades': executed_trades,
                'strategy_performance': strategy_performance,
                'percentage_change': percentage_change,
-               "style": specificStyling.get_sidebar_styling('reports')}
+               "style": specificStyling.get_sidebar_styling('reports'),
+               'username': user.username}
 
     return render(request, 'babaApp/reports.html', context)
 
@@ -231,6 +238,7 @@ def analyse(request, username, strategy_name):
                 if test_compare_strategy:
                     back_test_data_url = analysis.get_compare_back_test_data_url(username, strategy_name, test_compare_strategy.strategy_name, back_test_start_date, back_test_end_date)
 
+    strategy_trade_details = controller.get_strategy_trades_for_interval(user, strategy_name, strategy_chart_start_date, strategy_chart_end_date)
 
     market = controller.get_market_for_strategy_name(user, strategy_name)
     markets = controller.get_market_list()
@@ -244,6 +252,7 @@ def analyse(request, username, strategy_name):
         'back_test_time_interval_form': back_test_time_interval_form,
         'strategy_performance_data_url': strategy_performance_data_url,
         'back_test_data_url': back_test_data_url,
+        'strategy_trades': strategy_trade_details
     }
     return render(request, 'babaApp/analyse.html', context)
 
@@ -256,9 +265,11 @@ def random_variables_default(request):
 def random_variables(request, username):
 
     markets = controller.get_market_list()
+    exchange_events = controller.get_exchange_events()
 
     context = {'markets': markets,
                'username': username,
+               'exchange_events': exchange_events,
                'style': specificStyling.get_sidebar_styling('random_variables')}
 
     return render(request, 'babaApp/randomVariables.html', context)

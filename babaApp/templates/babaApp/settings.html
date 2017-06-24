@@ -24,18 +24,22 @@
 			<div id="main">
 
 				<!-- Header -->
-					<section id="top" class="one dark cover">
-						<div class="container">
 
-							<header>
-								<h3>Settings and trading preferences</h3>
+                    <section class="four">
+                        <div style="width:100%; height:25px; position:relative">
+                            <div align="left" style="float:left">
+                                <p2 style="margin-left:20px">Trading Preferences</p2>
+
+                                <p id="strategy_name" hidden>{{ strategy_name }}</p>
+                                <p id="username" hidden>{{ username }}</p>
+                            </div>
+                            <div align="right" style="float:right; margin-right:50px">
                                 {% if selected_strategy %}
-                                <p>{{selected_strategy}}</p>
+                                <p2 id="strategy_name" style="margin-left:50px">({{ selected_strategy }})</p2>
                                 {% endif %}
-							</header>
-
-						</div>
-					</section>
+                            </div>
+                        </div>
+                    </section>
 
                 <!-- Form -->
                 <section id="settings_section" class="two">
@@ -68,29 +72,14 @@
 						</div>
 					</section>
 
-                <!--  -->
-                    <section id="baba_elements" class="four">
-                        <div class="container">
-                            Some data options?
-                        </div>
-                    </section>
-
 			</div>
 
 		<!-- Footer -->
 			<div id="footer">
-
                 <ul class="copyright">
                     <li>Equity <b>GBP 10000</b></li>
                     <li>GBP/USD position value <b>GBP -897.23</b></li>
                 </ul>
-
-				<!--&lt;!&ndash; Copyright &ndash;&gt;-->
-					<!--<ul class="copyright">-->
-						<!--<li>&copy; Untitled. All rights reserved.</li>-->
-                        <!--<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>-->
-					<!--</ul>-->
-
 			</div>
 
 		<!-- Scripts -->

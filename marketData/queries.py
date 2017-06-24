@@ -9,6 +9,8 @@ _3MONTHS = '4'
 YEAR = '5'
 THREE_YEARS = '6'
 
+FLOAT_FORMAT = "{0:.5f}"
+
 
 # Returns the JSON representation for a query of
 # market data for the relevant symbol and time duration
@@ -54,7 +56,7 @@ def queryset_to_json(queryset, label):
 
         labels.append(res.tick_time.date())
         price_point = (res.bid_price + res.ask_price) / 2
-        chart_data.append(str(price_point))
+        chart_data.append(FLOAT_FORMAT.format(price_point))
 
     datasets = [{
         'label': label,

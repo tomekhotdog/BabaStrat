@@ -113,7 +113,7 @@ class ProgramParseException(Exception):
 
 decimal_number_regex = '\d*\.?\d*'
 assumption_regex = '\s*myAsm\([\w]+\)\.\s*$'
-rule_regex = '\s*myRule\(\s*[\w]+\s*,\s*\[([\w]|,|\s*|~)+\]\)\.\s*$'
+rule_regex = '\s*myRule\(\s*[\w]+\s*,\s*\[([\w+_\.]|,|\s*|~)+\]\)\.\s*$'
 contrary_regex = '\s*contrary\(\s*[\w]+\s*,\s*[\w]+\s*\)\.\s*$'
 random_variable_regex = '\s*myRV\(\s*~?\s*[\w]+\s*,\s*' + decimal_number_regex + '\s*\)\.\s*'
 conditional_rv_regex = '\s*myRV\(\s*[\w]+\s*,\s*\[.*\]\s*,\s*\[.*\]\s*\)\.\s*$'

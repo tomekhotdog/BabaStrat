@@ -69,7 +69,7 @@ def execute_task():
 
         try:
             market = Market.objects.get(symbol=symbol)
-            dataset = DataSet.objects.get(market_name=market.framework_name)
+            dataset = DataSet.objects.get(dataset_name=market.framework_name)
             datatick = DataTick(dataset=dataset,
                                 tick_time=tick.time,
                                 ask_price=tick.ask_price,
