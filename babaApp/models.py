@@ -123,3 +123,6 @@ class SimulatedTrade(models.Model):
 class ExchangeEvent(models.Model):
     event_name = models.CharField(max_length=100)
     probability = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.event_name

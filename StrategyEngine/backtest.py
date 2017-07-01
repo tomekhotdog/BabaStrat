@@ -229,7 +229,6 @@ def execute_open_position(user, strategy, direction, trading_settings, date):
         price=current_price,
         open_position=True,
         position_opened=date,
-        framework_at_open=strategy.framework
     )
     simulated_trade.save()
     log_trade_execution(strategy, direction, 'OPEN', current_price, quantity, date)

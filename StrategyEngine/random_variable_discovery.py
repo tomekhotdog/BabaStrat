@@ -44,6 +44,7 @@ def discover_random_variables():
         event_name_string = str(event_object).replace('.', '_')
         event_name_string = event_name_string.replace('+', 'plus')
         event_name_string = event_name_string.replace('-', 'minus')
+        event_name_string = event_name_string.replace('%', 'pct')
 
         new_event = ExchangeEvent(
             event_name=event_name_string,

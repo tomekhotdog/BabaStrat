@@ -31,7 +31,7 @@ def parse_csv(file_location):
             datatick_time = datetime(year, month, day, hour, minutes, seconds)
 
             ask_price = float(row[3])
-            bid_price = float(row[4])
+            bid_price = float(row[2])
 
             dataset_objects = DataSet.objects.filter(dataset_name=currency_symbol)
             dataset_object = None

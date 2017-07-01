@@ -398,6 +398,8 @@ def compute_semantic_probability(semantics, baba):
         language_probability[sentence.symbol] = 0.0
 
     worlds = generate_worlds(baba.random_variables)
+    worlds = [[]] if len(worlds) == 0 else worlds
+
     for world in worlds:
         baba.set_random_variable_world(world)
 
@@ -410,7 +412,7 @@ def compute_semantic_probability(semantics, baba):
         else:
             raise InvalidSemanticsException("Invalid semantics chosen: " + str(semantics))
 
-        world_probability = baba.BN.p_world(world)
+        world_probability = baba.BN.p_world(world) if len(world) > 0 else 1.0
 
         for sentence in baba.language:
             if any(derivable(baba, sentence, a_set.elements + baba.rv_world) for a_set in semantic_sets):

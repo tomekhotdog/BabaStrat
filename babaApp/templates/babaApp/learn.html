@@ -35,137 +35,30 @@
                                     <strong>A</strong>rgumentation<br/></h2>
 								<p>Designing investment strategies with arguments and automated reasoning</p>
 
-							<!--<footer>-->
-								<!--<a href="#portfolio" class="button scrolly">Magna Aliquam</a>-->
-							<!--</footer>-->
 
-						</div>
-					</section>
-
-                <!-- Strategy_confidence -->
-                    <section id="strategy_confidence" class="two">
-                        <div class="container">
-                            Introduction
-                            <table id="strategy_confidence_table" class="layout_table">
-                                <tr>
-                                    <td><h4 class="button">BUY</h4></td>
-                                    <td><h2>{{ semantic_probabilities.BUY }}</h2></td>
-									<td><div class="verticalDivider"></div></td>
-									<td><h2>{{ semantic_probabilities.SELL }}</h2></td>
-                                    <td><h4 class="button">SELL</h4></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </section>
-
-				<!-- Positions -->
-					<section id="positions" class="three">
-						<div class="container divBorder">
-                            Example usage
 						</div>
 					</section>
 
                 <!-- BABA elements -->
                     <section id="baba_elements" class="four">
-                        What you can do on BabaStrat
+                        Creating strategies with BabaStrat
                     </section>
 
                 <!-- Rules -->
                     <section id="rules" class="three">
                         <div class="container">
-                            Random variables
+                            <ol>
+								<li>1. Define assumptions, contraries, random variables as rules</li>
+                                <li>2. Define rules with <em>BUY</em> and <em>SELL</em> as heads</li>
+                                <li>3. BabaStrat computes semantic probabilities of BUY and SELL</li>
+                                <li>4. Choose trading behaviour for each strategy in <em>Trading Preferences</em></li>
+                                <li>5. Monitor open and executed positions in <em>Reports</em></li>
+                                <li>6. Analyse the performance of your strategies and perform backtesting in <em>Analyse</em></li>
+                                <li>7. Use random variables derived from external services in <em>Variables</em></li>
+							</ol>
                         </div>
                     </section>
 
-				 <!--Portfolio -->
-					<section id="portfolio" class="two">
-						<div class="container">
-
-							<header>
-								<h2>Example strategies</h2>
-							</header>
-
-							<p>Vitae natoque dictum etiam semper magnis enim feugiat convallis convallis
-							egestas rhoncus ridiculus in quis risus amet curabitur tempor orci penatibus.
-							Tellus erat mauris ipsum fermentum etiam vivamus eget. Nunc nibh morbi quis
-							fusce hendrerit lacus ridiculus.</p>
-
-							<div class="row">
-								<div class="4u 12u$(mobile)">
-									<article class="item">
-										<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic02.jpg' %}" alt="" /></a>
-										<header>
-											<h3>Ipsum Feugiat</h3>
-										</header>
-									</article>
-									<article class="item">
-										<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic03.jpg' %}" alt="" /></a>
-										<header>
-											<h3>Rhoncus Semper</h3>
-										</header>
-									</article>
-								</div>
-								<div class="4u 12u$(mobile)">
-									<article class="item">
-										<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic04.jpg' %}" alt="" /></a>
-										<header>
-											<h3>Magna Nullam</h3>
-										</header>
-									</article>
-									<article class="item">
-										<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic05.jpg' %}" alt="" /></a>
-										<header>
-											<h3>Natoque Vitae</h3>
-										</header>
-									</article>
-								</div>
-								<div class="4u$ 12u$(mobile)">
-									<article class="item">
-										<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic06.jpg' %}" alt="" /></a>
-										<header>
-											<h3>Dolor Penatibus</h3>
-										</header>
-									</article>
-									<article class="item">
-										<a href="#" class="image fit"><img src="{% static 'babaApp/images/pic07.jpg' %}" alt="" /></a>
-										<header>
-											<h3>Orci Convallis</h3>
-										</header>
-									</article>
-								</div>
-							</div>
-
-						</div>
-					</section>
-
-				 <!--Contact-->
-					<section id="contact" class="four">
-						<div class="container">
-
-							<header>
-								<h2>Contact</h2>
-							</header>
-
-							<p>Elementum sem parturient nulla quam placerat viverra
-							mauris non cum elit tempus ullamcorper dolor. Libero rutrum ut lacinia
-							donec curae mus. Eleifend id porttitor ac ultricies lobortis sem nunc
-							orci ridiculus faucibus a consectetur. Porttitor curae mauris urna mi dolor.</p>
-
-							<form method="post" action="#">
-								<div class="row">
-									<div class="6u 12u$(mobile)"><input type="text" name="name" placeholder="Name" /></div>
-									<div class="6u$ 12u$(mobile)"><input type="text" name="email" placeholder="Email" /></div>
-									<div class="12u$">
-										<textarea name="message" placeholder="Message"></textarea>
-									</div>
-									<div class="12u$">
-										<input type="submit" value="Send Message" />
-									</div>
-								</div>
-							</form>
-
-						</div>
-					</section>
 
 			</div>
 

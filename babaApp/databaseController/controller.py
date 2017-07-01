@@ -267,7 +267,8 @@ def add_framework_extension(user, strategy_name, macro_rule=None):
         if macro_rule is not None:
             strategy_extension += macro_rule
 
-        strategy.framework_extension = (strategy.framework_extension + strategy_extension)
+        existing_extension = strategy.framework_extension if strategy.framework_extension is not None else ''
+        strategy.framework_extension = existing_extension + strategy_extension
         strategy.save()
 
     except Strategy.DoesNotExist:
